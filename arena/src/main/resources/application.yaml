@@ -1,0 +1,8 @@
+#spring:
+#  datasource:
+#    type: postgresql
+
+
+security:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
