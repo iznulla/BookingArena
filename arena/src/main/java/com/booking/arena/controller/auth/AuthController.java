@@ -1,8 +1,8 @@
 package com.booking.arena.controller.auth;
 
 
-import com.booking.arena.dto.login.LoginResponseDto;
-import com.booking.arena.dto.login.LoginUserDto;
+import com.booking.arena.dto.auth.LoginResponseDto;
+import com.booking.arena.dto.auth.LoginUserDto;
 import com.booking.arena.service.secure.LoginManagerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

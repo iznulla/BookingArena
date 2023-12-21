@@ -5,6 +5,8 @@ import com.booking.arena.entity.user.UserProfile;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
+
 
 @Entity
 @Builder
@@ -31,6 +33,10 @@ public class Address {
     @OneToOne(mappedBy = "address")
     private UserProfile userProfile;
 
+    @Column(name = "created_at")
+    private Instant createdAt;
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 
     private Double longitude;
     private Double latitude;

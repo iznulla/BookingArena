@@ -1,7 +1,31 @@
-#spring:
-#  datasource:
-#    type: postgresql
+spring:
+  flyway:
+    enabled: ${MIGRATION_ENABLE}
 
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      dialect: ${DATABASE_DIALECT}
+      connection:
+        driver_class: ${DB_DRIVER_CLASS}
+      ddl-auto: ${DDL_AUTO}
+      show_sql: true
+
+
+
+
+springdoc:
+  api-docs:
+    enabled: true
+    resolve-schema-properties: true
+  swagger-ui:
+    enabled: true
+  default-produces-media-type: application/json
+  writer-with-default-pretty-printer: true
 
 security:
   jwt:

@@ -41,6 +41,11 @@ public class RolePrivilege {
         privilege.getRolePrivileges().add(this);
     }
 
+    public void deletePrivilegeFromRole(Privilege privilege) {
+        this.privilege = null;
+        role.getRolePrivileges().remove(this);
+    }
+
     public void setRole(RoleEntity role) {
         this.role = role;
         role.getRolePrivileges().add(this);

@@ -31,6 +31,8 @@ public class UserProfile {
     @OneToOne
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
-    @Column(name = "create_at")
-    private Instant createAt;
+    @Column(name = "created_at")
+    private Instant createdAt;
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 }

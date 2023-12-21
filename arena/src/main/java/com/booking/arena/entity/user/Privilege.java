@@ -3,6 +3,7 @@ package com.booking.arena.entity.user;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,4 +22,9 @@ public class Privilege {
     @Builder.Default
     @OneToMany(mappedBy = "privilege", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RolePrivilege> rolePrivileges = new ArrayList<>();
+
+    @Column(name = "created_at")
+    private Instant createdAt;
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 }

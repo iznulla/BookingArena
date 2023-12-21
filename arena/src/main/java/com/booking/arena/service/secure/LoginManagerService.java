@@ -1,7 +1,7 @@
 package com.booking.arena.service.secure;
 
 
-import com.booking.arena.dto.login.LoginResponseDto;
+import com.booking.arena.dto.auth.LoginResponseDto;
 import com.booking.arena.security.JwtIssuer;
 import com.booking.arena.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;

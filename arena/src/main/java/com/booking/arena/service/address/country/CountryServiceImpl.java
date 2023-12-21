@@ -1,0 +1,84 @@
+package com.booking.arena.service.address.country;
+
+import com.booking.arena.dto.address.LocationDto;
+import com.booking.arena.entity.address.CountryEntity;
+import com.booking.arena.exception.ResourceNotFoundException;
+import com.booking.arena.repository.CountryRepository;
+import com.booking.arena.utils.ConvertEntityToDto;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class CountryServiceImpl implements CountryService {
+    private final CountryRepository countryRepository;
+
+    @Override
+    public Optional<LocationDto> createCountry(LocationDto countryDto) {
+        CountryEntity country = CountryEntity.builder()
+                .name(countryDto.getName())
+                .build();
+        country.setCreatedAt(Instant.now());
+        country.setUpdatedAt(Instant.now());
+        countryRepository.save(country);
+        log.info("Country created: {}", country.getName());
+        return Optional.of(LocationDto.builder()
+                .name(country.getName())
+                .build());
+    }
+
+    @Override
+    public Optional<LocationDto> updateCountry(Long id, LocationDto countryDto) {
+        CountryEntity country = countryRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Not found country with id: " + id)
+        );
+        country.setName(countryDto.getName());
+        country.setUpdatedAt(Instant.now());
+        countryRepository.save(country);
+        log.info("Country updated: {}", country);
+        return Optional.of(LocationDto.builder()
+                .name(country.getName())
+                .build());
+    }
+
+    @Override
+    public Optional<LocationDto> getCountryById(Long id) {
+        CountryEntity country = countryRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Not found country with id: " + id)
+        );
+        return Optional.of(LocationDto.builder()
+                .name(country.getName())
+                .build());
+    }
+
+    @Override
+    public Optional<LocationDto> getCountryByName(String name) {
+        CountryEntity country = countryRepository.findByName(name).orElseThrow(() ->
+                new ResourceNotFoundException("Not found country with id: " + name)
+        );
+        return Optional.of(LocationDto.builder()
+                .name(country.getName())
+                .build());
+    }
+
+    @Override
+    public List<LocationDto> getAllCountries() {
+        return countryRepository.findAll().stream()
+                .map(ConvertEntityToDto::countryToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteCountryById(Long id) {
+        countryRepository.deleteById(id);
+        log.info("Country deleted with id: {}", id);
+    }
+}

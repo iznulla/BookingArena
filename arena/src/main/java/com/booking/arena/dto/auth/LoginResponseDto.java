@@ -1,4 +1,4 @@
-package com.booking.arena.dto.login;
+package com.booking.arena.dto.auth;
 
 import lombok.Builder;
 import lombok.Getter;
