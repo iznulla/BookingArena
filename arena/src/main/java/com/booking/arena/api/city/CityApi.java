@@ -31,7 +31,7 @@ public class CityApi {
     )
     @GetMapping
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(cityService.getAllCities());
+        return ResponseEntity.ok(cityService.getAll());
     }
 
     @ApiResponses({
@@ -44,7 +44,7 @@ public class CityApi {
     )
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(cityService.getCityById(id));
+        return ResponseEntity.ok(cityService.getById(id));
     }
 
     @ApiResponses({
@@ -57,7 +57,7 @@ public class CityApi {
     )
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CityDto cityDto) {
-        return ResponseEntity.ok(cityService.createCity(cityDto));
+        return ResponseEntity.ok(cityService.create(cityDto));
     }
 
     @ApiResponses({
@@ -70,7 +70,7 @@ public class CityApi {
     )
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CityDto cityDto) {
-        return ResponseEntity.ok(cityService.updateCity(id, cityDto));
+        return ResponseEntity.ok(cityService.update(id, cityDto));
     }
 
     @ApiResponses({
@@ -83,7 +83,7 @@ public class CityApi {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        cityService.deleteCityById(id);
+        cityService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

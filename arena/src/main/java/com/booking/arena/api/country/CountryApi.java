@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/country")
@@ -32,7 +30,7 @@ public class CountryApi {
     )
     @GetMapping
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(countryService.getAllCountries());
+        return ResponseEntity.ok(countryService.getAll());
     }
 
     @ApiResponses({
@@ -45,7 +43,7 @@ public class CountryApi {
     )
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(countryService.getCountryById(id));
+        return ResponseEntity.ok(countryService.getById(id));
     }
 
     @ApiResponses({
@@ -58,7 +56,7 @@ public class CountryApi {
     )
     @PostMapping
     public ResponseEntity<?> create(@RequestBody LocationDto locationDto) {
-        return ResponseEntity.ok(countryService.createCountry(locationDto));
+        return ResponseEntity.ok(countryService.create(locationDto));
     }
 
     @ApiResponses({
@@ -71,7 +69,7 @@ public class CountryApi {
     )
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody LocationDto locationDto) {
-        return ResponseEntity.ok(countryService.updateCountry(id, locationDto));
+        return ResponseEntity.ok(countryService.update(id, locationDto));
     }
 
     @ApiResponses({
@@ -84,7 +82,7 @@ public class CountryApi {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        countryService.deleteCountryById(id);
+        countryService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

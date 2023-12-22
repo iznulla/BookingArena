@@ -27,7 +27,7 @@ public class CityServiceImpl implements CityService {
     private final CountryRepository countryRepository;
 
     @Override
-    public Optional<CityDto> createCity(CityDto cityDto) {
+    public Optional<CityDto> create(CityDto cityDto) {
         CountryEntity country = countryRepository.findByName(cityDto.getCountryName()).orElseThrow(() ->
                 new ResourceNotFoundException("Not found country with id: " + cityDto.getId()));
         CityEntity city = CityEntity.builder()
@@ -44,7 +44,7 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public Optional<CityDto> updateCity(Long id, CityDto cityDto) {
+    public Optional<CityDto> update(Long id, CityDto cityDto) {
         CityEntity city = cityRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found city with id: " + id));
         city.setName(cityDto.getName());
@@ -57,7 +57,7 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public Optional<CityDto> getCityById(Long id) {
+    public Optional<CityDto> getById(Long id) {
         CityEntity city = cityRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found city with id: " + id));
         return Optional.of(CityDto.builder()
@@ -77,13 +77,13 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public Optional<List<CityDto>> getAllCities() {
+    public Optional<List<CityDto>> getAll() {
         return Optional.of(cityRepository.findAll().stream()
                 .map(ConvertEntityToDto::cityToDto).collect(Collectors.toList()));
     }
 
     @Override
-    public void deleteCityById(Long id) {
+    public void delete(Long id) {
         if (cityRepository.existsById(id)) {
             cityRepository.deleteById(id);
             log.info("City deleted by id: {}", id);

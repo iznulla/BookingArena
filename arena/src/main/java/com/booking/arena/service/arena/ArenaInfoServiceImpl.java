@@ -33,7 +33,7 @@ public class ArenaInfoServiceImpl implements ArenaInfoService{
 
     @Override
     public Optional<ArenaInfo> create(ArenaInfoDto arenaInfoDto) {
-        Address address = addressService.createAddress(arenaInfoDto.getAddress()).orElseThrow(
+        Address address = addressService.create(arenaInfoDto.getAddress()).orElseThrow(
                 () -> new ResourceNotFoundException("Address is Not valid")
         );
         try {
@@ -57,7 +57,7 @@ public class ArenaInfoServiceImpl implements ArenaInfoService{
     public Optional<ArenaInfo> update(Long id, ArenaInfoDto arenaInfoDto) {
         ArenaInfo arenaInfo = arenaInfoRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found arena with id: " + id));
-        Address address = addressService.getAddressById(arenaInfo.getAddress().getId()).orElseThrow(
+        Address address = addressService.getById(arenaInfo.getAddress().getId()).orElseThrow(
                 () -> new ResourceNotFoundException("Not found address with id: " + arenaInfo.getAddress().getId())
         );
         try {
@@ -67,7 +67,7 @@ public class ArenaInfoServiceImpl implements ArenaInfoService{
             arenaInfo.setWorkedFrom(arenaInfoDto.getWorkedFrom());
             arenaInfo.setWorkedTo(arenaInfoDto.getWorkedTo());
             if (ConvertEntityToDto.addressToDto(address) != arenaInfoDto.getAddress())
-                address = addressService.updateAddress(address.getId(), arenaInfoDto.getAddress()).orElseThrow();
+                address = addressService.update(address.getId(), arenaInfoDto.getAddress()).orElseThrow();
             arenaInfo.setAddress(address);
             arenaInfoRepository.save(arenaInfo);
             return Optional.of(arenaInfo);

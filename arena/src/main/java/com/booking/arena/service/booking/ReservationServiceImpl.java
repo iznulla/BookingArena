@@ -66,14 +66,10 @@ public class ReservationServiceImpl implements ReservationService{
                 bookingUser.setUser(userRepository.findById(SecurityUtils.getCurrentUserId()).orElseThrow(
                         () -> new ResourceNotFoundException("Not found user with id: " + SecurityUtils.getCurrentUserId())
                 ));
-            } else {
-                if (reservationArenaDto.getCostumer() == null) {
-                    bookingUser.setConsumer(SecurityUtils.getCurrentUsername());
-                    bookingUser.setConsumer(SecurityUtils.getCurrentUsername());
-                } else {
-                    bookingUser.setConsumer(reservationArenaDto.getCostumer());
-                }
+                bookingUser.setConsumer(SecurityUtils.getCurrentUsername());
             }
+            reservationArena.setCostumer(reservationArenaDto.getCostumer());
+            bookingUser.setConsumer(reservationArenaDto.getCostumer());
             reservationArenaRepository.save(reservationArena);
             log.debug("Created reservation arena with id: {}, from user by username: {}"
                     , reservationArena.getId(), SecurityUtils.getCurrentUsername());

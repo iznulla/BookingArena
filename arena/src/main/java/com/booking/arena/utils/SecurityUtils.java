@@ -1,6 +1,5 @@
 package com.booking.arena.utils;
 
-import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.security.UserPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -11,7 +10,7 @@ public class SecurityUtils {
         if (principal instanceof UserPrincipal) {
             return ((UserPrincipal) principal).getUserId();
         }
-        throw new ResourceNotFoundException("User not found");
+        return null;
     }
 
     public static String getCurrentUsername() {
@@ -20,7 +19,7 @@ public class SecurityUtils {
         if (principal instanceof UserPrincipal) {
             return ((UserPrincipal) principal).getUsername();
         }
-        throw new ResourceNotFoundException("User not found");
+        return null;
     }
 
 }

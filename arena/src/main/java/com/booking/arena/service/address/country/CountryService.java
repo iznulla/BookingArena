@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CountryService {
-    Optional<LocationDto> createCountry(LocationDto countryDto);
-    Optional<LocationDto> updateCountry(Long id, LocationDto countryDto);
-    Optional<LocationDto> getCountryById(Long id);
+    Optional<LocationDto> create(LocationDto countryDto);
+    Optional<LocationDto> update(Long id, LocationDto countryDto);
+    Optional<LocationDto> getById(Long id);
     Optional<LocationDto> getCountryByName(String name);
-    List<LocationDto> getAllCountries();
-    void deleteCountryById(Long id);
+    List<LocationDto> getAll();
+    void delete(Long id);
 }

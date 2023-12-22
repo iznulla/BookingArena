@@ -8,8 +8,8 @@ import com.booking.arena.entity.address.Address;
 import java.util.Optional;
 
 public interface AddressService {
-    Optional<Address> createAddress(AddressDto addressDto);
-    Optional<Address> updateAddress(Long id, AddressDto addressDto);
-    Optional<Address> getAddressById(Long id);
-    void deleteAddressById(Long id);
+    Optional<Address> create(AddressDto addressDto);
+    Optional<Address> update(Long id, AddressDto addressDto);
+    Optional<Address> getById(Long id);
+    void delete(Long id);
 }

@@ -46,10 +46,10 @@ public class UserProfileServiceImpl implements UserProfileService {
         profile.setName(userProfileDto.getName());
         profile.setSurname(userProfileDto.getSurname());
         profile.setUpdatedAt(Instant.now());
-        Address address = addressService.getAddressById(profile.getAddress().getId()).orElseThrow(
+        Address address = addressService.getById(profile.getAddress().getId()).orElseThrow(
                 () -> new ResourceNotFoundException("Not found address with id: " + profile.getAddress().getId())
         );
-        addressService.updateAddress(address.getId(), userProfileDto.getAddress()).orElseThrow();
+        addressService.update(address.getId(), userProfileDto.getAddress()).orElseThrow();
         userProfileRepository.save(profile);
         userRepository.save(user);
         return Optional.of(ConvertEntityToDto.userProfileToDto(profile));

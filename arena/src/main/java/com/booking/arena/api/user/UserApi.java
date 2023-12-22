@@ -33,7 +33,7 @@ public class UserApi {
     )
     @GetMapping
     public ResponseEntity<?> getAll() {
-        return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(userService.getAll(), HttpStatus.valueOf(200));
     }
 
     @ApiResponses({
@@ -46,7 +46,7 @@ public class UserApi {
     )
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-            return new ResponseEntity<>(userService.getUserById(id).orElseThrow(), HttpStatus.valueOf(200));
+            return new ResponseEntity<>(userService.getById(id).orElseThrow(), HttpStatus.valueOf(200));
     }
 
     @ApiResponses({
@@ -59,7 +59,7 @@ public class UserApi {
     )
     @PostMapping
     public ResponseEntity<?> create(@RequestBody SignUpDto signUpDto) {
-        return new ResponseEntity<>(userService.createUser(signUpDto), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(userService.create(signUpDto), HttpStatus.valueOf(201));
     }
 
     @ApiResponses({
@@ -72,7 +72,7 @@ public class UserApi {
     )
     @PatchMapping("/{id}")
     public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserUpdateDto userDto) {
-        return new ResponseEntity<>(userService.updateUser(id, userDto).orElseThrow(), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(userService.update(id, userDto).orElseThrow(), HttpStatus.valueOf(201));
     }
 
     @ApiResponses({
@@ -85,7 +85,7 @@ public class UserApi {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        userService.deleteUser(id);
+        userService.delete(id);
         return new ResponseEntity<>(String.format("Delete user by Id: %d success", id),HttpStatus.NO_CONTENT);
     }
 }

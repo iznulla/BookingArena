@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public Optional<UserDto> createUser(SignUpDto signUpDto) {
+    public Optional<UserDto> create(SignUpDto signUpDto) {
         RoleEntity role = roleRepository.findByName("USER").orElseThrow(
                 () -> new ResourceNotFoundException("No correspond to any role")
         );
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
                 .role(role)
                 .email(signUpDto.getEmail())
                 .build();
-        Address address = addressService.createAddress(signUpDto.getUserProfile().getAddress()).orElseThrow(
+        Address address = addressService.create(signUpDto.getUserProfile().getAddress()).orElseThrow(
                 () -> new ResourceNotFoundException("No correspond to any address")
         );
         UserProfile profile = UserProfile.builder()
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<UserDto> findAllUsers() {
+    public List<UserDto> getAll() {
         return Optional.of(userRepository.findAll().stream().map(ConvertEntityToDto::userToDto).toList()).orElseThrow(
                 () -> new ResourceNotFoundException(
                         "Users not found"
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> getUserById(Long id) {
+    public Optional<UserDto> getById(Long id) {
         return Optional.ofNullable(ConvertEntityToDto.userToDto(userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(
                         String.format("User with id %s not found", id)
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> updateUser(Long id, UserUpdateDto userDto) {
+    public Optional<UserDto> update(Long id, UserUpdateDto userDto) {
         UserEntity user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 String.format("User with id %s not found", id)
         ));
@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void delete(Long id) {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
             log.debug("deleted user by id {}", id);

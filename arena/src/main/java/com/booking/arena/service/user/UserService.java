@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    Optional<UserDto> createUser(SignUpDto signUpDto);
-    List<UserDto> findAllUsers();
+    Optional<UserDto> create(SignUpDto signUpDto);
+    List<UserDto> getAll();
     Optional<UserDto> getUserByUsername(String username);
-    Optional<UserDto> getUserById(Long id);
-    Optional<UserDto> updateUser(Long id, UserUpdateDto userDto);
-    void deleteUser(Long id);
+    Optional<UserDto> getById(Long id);
+    Optional<UserDto> update(Long id, UserUpdateDto userDto);
+    void delete(Long id);
 //    boolean verification(Long id, String code);
 }

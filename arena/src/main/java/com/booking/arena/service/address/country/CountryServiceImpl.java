@@ -25,7 +25,7 @@ public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
 
     @Override
-    public Optional<LocationDto> createCountry(LocationDto countryDto) {
+    public Optional<LocationDto> create(LocationDto countryDto) {
         CountryEntity country = CountryEntity.builder()
                 .name(countryDto.getName())
                 .build();
@@ -39,7 +39,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public Optional<LocationDto> updateCountry(Long id, LocationDto countryDto) {
+    public Optional<LocationDto> update(Long id, LocationDto countryDto) {
         CountryEntity country = countryRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found country with id: " + id)
         );
@@ -53,7 +53,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public Optional<LocationDto> getCountryById(Long id) {
+    public Optional<LocationDto> getById(Long id) {
         CountryEntity country = countryRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found country with id: " + id)
         );
@@ -73,13 +73,13 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public List<LocationDto> getAllCountries() {
+    public List<LocationDto> getAll() {
         return countryRepository.findAll().stream()
                 .map(ConvertEntityToDto::countryToDto).collect(Collectors.toList());
     }
 
     @Override
-    public void deleteCountryById(Long id) {
+    public void delete(Long id) {
         if (!countryRepository.existsById(id)) {
             throw new ResourceNotFoundException("Not found country with id: " + id);
         }

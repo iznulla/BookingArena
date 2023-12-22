@@ -26,7 +26,7 @@ public class AddressServiceImpl implements AddressService {
     private final CountryRepository countryRepository;
 
     @Override
-    public Optional<Address> createAddress(AddressDto addressDto) {
+    public Optional<Address> create(AddressDto addressDto) {
         CountryEntity country = countryRepository.findByName(addressDto.getCountry().getName()).orElseThrow(() ->
                 new ResourceNotFoundException("No correspond to any country"));
         CityEntity city = cityRepository.findByName(addressDto.getCity().getName()).orElseThrow(() ->
@@ -46,7 +46,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Optional<Address> updateAddress(Long id, AddressDto addressDto) {
+    public Optional<Address> update(Long id, AddressDto addressDto) {
         Address address = addressRepository.findById(id).orElseThrow();
 
         CountryEntity country = countryRepository.findByName(addressDto.getCountry().getName()).orElseThrow(
@@ -68,7 +68,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Optional<Address> getAddressById(Long id) {
+    public Optional<Address> getById(Long id) {
         Address address = addressRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Not found address with id: " + id)
         );
@@ -76,7 +76,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public void deleteAddressById(Long id) {
+    public void delete(Long id) {
         addressRepository.deleteById(id);
     }
 }
