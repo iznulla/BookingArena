@@ -22,8 +22,8 @@ public class ArenaApi {
     private final ArenaService arenaService;
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ArenaDto.class), mediaType = "application/json") }),
-            @ApiResponse(responseCode = "404",content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ArenaDto.class)) }),
+            @ApiResponse(responseCode = "404",content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
             summary = "GET all arena",
@@ -35,8 +35,8 @@ public class ArenaApi {
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = ArenaDto.class), mediaType = "application/json") }),
-            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = ArenaDto.class)) }),
+            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
             summary = "POST create arena",
@@ -48,8 +48,8 @@ public class ArenaApi {
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ArenaDto.class), mediaType = "application/json") }),
-            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ArenaDto.class)) }),
+            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
             summary = "GET{id} arena by id",
@@ -61,8 +61,8 @@ public class ArenaApi {
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = ArenaDto.class), mediaType = "application/json") }),
-            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = ArenaDto.class)) }),
+            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
             summary = "PATCH{id} update arena by Id and new params in body",
@@ -75,7 +75,7 @@ public class ArenaApi {
 
     @ApiResponses({
             @ApiResponse(responseCode = "204"),
-            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
             summary = "DELETE{id} arena by Id",
