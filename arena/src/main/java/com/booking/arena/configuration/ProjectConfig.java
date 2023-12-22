@@ -1,9 +1,9 @@
 package com.booking.arena.configuration;
 
 import com.booking.arena.entity.user.*;
-import com.booking.arena.repository.PrivilegeRepository;
-import com.booking.arena.repository.RoleRepository;
-import com.booking.arena.repository.UserRepository;
+import com.booking.arena.repository.user.PrivilegeRepository;
+import com.booking.arena.repository.user.RoleRepository;
+import com.booking.arena.repository.user.UserRepository;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;

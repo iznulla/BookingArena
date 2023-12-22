@@ -1,4 +1,4 @@
-package com.booking.arena.repository;
+package com.booking.arena.repository.user;
 
 
 import com.booking.arena.entity.user.Privilege;

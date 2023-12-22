@@ -1,4 +1,4 @@
-package com.booking.arena.repository;
+package com.booking.arena.repository.address;
 
 
 import com.booking.arena.entity.address.CityEntity;

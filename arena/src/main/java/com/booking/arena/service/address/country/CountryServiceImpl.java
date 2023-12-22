@@ -3,8 +3,9 @@ package com.booking.arena.service.address.country;
 import com.booking.arena.dto.address.LocationDto;
 import com.booking.arena.entity.address.CountryEntity;
 import com.booking.arena.exception.ResourceNotFoundException;
-import com.booking.arena.repository.CountryRepository;
+import com.booking.arena.repository.address.CountryRepository;
 import com.booking.arena.utils.ConvertEntityToDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Tag(name = "Country", description = "Country management APIs")
 public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
 
@@ -78,6 +80,9 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public void deleteCountryById(Long id) {
+        if (!countryRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Not found country with id: " + id);
+        }
         countryRepository.deleteById(id);
         log.info("Country deleted with id: {}", id);
     }

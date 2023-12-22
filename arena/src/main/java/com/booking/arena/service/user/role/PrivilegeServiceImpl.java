@@ -3,7 +3,7 @@ package com.booking.arena.service.user.role;
 import com.booking.arena.dto.user.PrivilegeDto;
 import com.booking.arena.entity.user.Privilege;
 import com.booking.arena.exception.ResourceNotFoundException;
-import com.booking.arena.repository.PrivilegeRepository;
+import com.booking.arena.repository.user.PrivilegeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

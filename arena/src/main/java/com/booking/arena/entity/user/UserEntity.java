@@ -1,8 +1,12 @@
 package com.booking.arena.entity.user;
 
 
+import com.booking.arena.entity.booking.BookingUser;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Builder
@@ -32,5 +36,9 @@ public class UserEntity {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
     private UserProfile userProfile;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<BookingUser> bookingUser = new ArrayList<>();
 
 }
