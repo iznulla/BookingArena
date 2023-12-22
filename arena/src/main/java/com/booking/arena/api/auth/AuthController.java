@@ -1,4 +1,4 @@
-package com.booking.arena.controller.auth;
+package com.booking.arena.api.auth;
 
 
 import com.booking.arena.dto.auth.LoginResponseDto;

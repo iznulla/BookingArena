@@ -43,6 +43,4 @@ public class ArenaEntity {
     @Builder.Default
     @OneToMany(mappedBy = "arena", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<ReservationArena> reservationArena = new ArrayList<>();
-
-    // discounts
 }

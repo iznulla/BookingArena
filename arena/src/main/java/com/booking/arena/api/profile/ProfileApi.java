@@ -1,4 +1,4 @@
-package com.booking.arena.controller.profile;
+package com.booking.arena.api.profile;
 
 import com.booking.arena.dto.user.UserProfileDto;
 import com.booking.arena.exception.ResourceNotFoundException;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/profile")
 @Tag(name = "Profile", description = "API для работы с профилем пользователя")
-public class ProfileController {
+public class ProfileApi {
     private final UserProfileService userProfileService;
 
     @ApiResponses({
@@ -26,12 +26,12 @@ public class ProfileController {
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
-            summary = "PATCH update user by Id and new params in body",
+            summary = "PATCH{id} update user by Id and new params in body",
             description = "Позволяет изменить данные пользователя, предназначен только для аутенцифицированного пользователя"
     )
     @PatchMapping
-    public ResponseEntity<?> updateUserProfile(@RequestParam Long id, @RequestBody UserProfileDto userProfileDto) {
-        return new ResponseEntity<>(userProfileService.updateUserProfile(userProfileDto), HttpStatus.valueOf(201));
+    public ResponseEntity<?> update(@RequestParam Long id, @RequestBody UserProfileDto userProfileDto) {
+        return new ResponseEntity<>(userProfileService.update(userProfileDto), HttpStatus.valueOf(201));
     }
 
     @ApiResponses({
@@ -43,7 +43,7 @@ public class ProfileController {
             description = "Позволяет получить пользователей по id"
     )
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserProfile(@RequestParam Long id) {
-        return new ResponseEntity<>(userProfileService.getUserProfileByUserId(id), HttpStatus.valueOf(200));
+    public ResponseEntity<?> getById(@RequestParam Long id) {
+        return new ResponseEntity<>(userProfileService.getById(id), HttpStatus.valueOf(200));
     }
 }

@@ -1,5 +1,6 @@
-package com.booking.arena.controller.arena;
+package com.booking.arena.api.arena;
 
+import com.booking.arena.dto.address.CityDto;
 import com.booking.arena.dto.arena.ArenaDto;
 import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.service.arena.ArenaService;
@@ -15,10 +16,23 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/arena")
+@RequestMapping("api/v1/arena")
 @Tag(name = "Arena", description = "API для работы с спорт комплексами")
-public class ArenaController {
+public class ArenaApi {
     private final ArenaService arenaService;
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ArenaDto.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "404",content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
+    @Operation(
+            summary = "GET all arena",
+            description = "Позволяет получить все спорт-комплексов"
+    )
+    @GetMapping
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(arenaService.getAll());
+    }
 
     @ApiResponses({
             @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = ArenaDto.class), mediaType = "application/json") }),
@@ -29,7 +43,7 @@ public class ArenaController {
             description = "Позволяет создать комплекс"
     )
     @PostMapping
-    public ResponseEntity<?> createArena(@RequestBody ArenaDto arenaDto) {
+    public ResponseEntity<?> create(@RequestBody ArenaDto arenaDto) {
         return ResponseEntity.ok(arenaService.create(arenaDto));
     }
 
@@ -42,7 +56,7 @@ public class ArenaController {
             description = "Позволяет получить спорт комплекс по id"
     )
     @GetMapping("/{id}")
-    public ResponseEntity<?> getArenaById(@PathVariable Long id) {
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         return ResponseEntity.ok(arenaService.getById(id));
     }
 
@@ -51,12 +65,26 @@ public class ArenaController {
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
-            summary = "PATCH update arena by Id and new params in body",
+            summary = "PATCH{id} update arena by Id and new params in body",
             description = "Позволяет изменить данные спорт-комплекса, предназначен только для админа и менеджера"
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateArenaById(@PathVariable Long id, @RequestBody ArenaDto arenaDto) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ArenaDto arenaDto) {
         return ResponseEntity.ok(arenaService.update(id, arenaDto));
+    }
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "204"),
+            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
+    @Operation(
+            summary = "DELETE{id} arena by Id",
+            description = "Позволяет удалить спорт-комплекс по id, только админ"
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        arenaService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

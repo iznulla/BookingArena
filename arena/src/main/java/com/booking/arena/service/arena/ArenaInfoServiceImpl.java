@@ -2,14 +2,12 @@ package com.booking.arena.service.arena;
 
 import com.booking.arena.dto.arena.ArenaInfoDto;
 import com.booking.arena.entity.address.Address;
-import com.booking.arena.entity.arena.ArenaEntity;
 import com.booking.arena.entity.arena.ArenaInfo;
 import com.booking.arena.exception.ResourceNotFoundException;
-import com.booking.arena.repository.address.CountryRepository;
 import com.booking.arena.repository.arena.ArenaInfoRepository;
 import com.booking.arena.service.address.AddressService;
 import com.booking.arena.utils.ConvertEntityToDto;
-import lombok.Builder;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -36,9 +36,7 @@ public class ArenaServiceImpl implements ArenaService{
     @Override
     public List<ArenaDto> getAll() {
         List<ArenaEntity> arenas = arenaRepository.findAll();
-        return Optional.of(arenas.stream().map(ConvertEntityToDto::arenaToDto).toList()).orElseThrow(() ->
-                new ResourceNotFoundException("Not found any arena")
-        );
+        return arenas.stream().map(ConvertEntityToDto::arenaToDto).toList();
     }
 
     @Override
@@ -59,7 +57,7 @@ public class ArenaServiceImpl implements ArenaService{
                     .build();
             arenaInfo.setArena(arena);
             arenaRepository.save(arena);
-            log.debug("Create arena with id: {}, from user by username: {}", arena.getId(), user.getUsername());
+            log.info("Create arena with id: {}, from user by username: {}", arena.getId(), user.getUsername());
             return Optional.of(ConvertEntityToDto.arenaToDto(arena));
         } catch (Exception e) {
             throw new ResourceNotFoundException("Invalid input data\n" + e.getMessage());

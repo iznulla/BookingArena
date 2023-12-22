@@ -22,20 +22,6 @@ public class ProjectConfig {
     private final PrivilegeRepository privilegeRepository;
     private final RoleRepository roleRepository;
 
-    private SecurityScheme createAPIKeyScheme() {
-        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
-                .bearerFormat("JWT")
-                .scheme("bearer");
-    }
-
-    @Bean
-    public OpenAPI openAPI() {
-        return new OpenAPI().addSecurityItem(new SecurityRequirement().
-                        addList("Bearer Authentication"))
-                .components(new Components().addSecuritySchemes
-                        ("Bearer Authentication", createAPIKeyScheme()));
-    }
-
     private final PasswordEncoder passwordEncoder;
 
     @PostConstruct

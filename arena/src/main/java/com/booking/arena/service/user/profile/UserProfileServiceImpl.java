@@ -27,14 +27,14 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final UserRepository userRepository;
     private final AddressService addressService;
     @Override
-    public Optional<UserProfileDto> getUserProfileByUserId(Long id) {
+    public Optional<UserProfileDto> getById(Long id) {
         UserProfile profile = userProfileRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found profile with id: " + id));
         return Optional.of(ConvertEntityToDto.userProfileToDto(profile));
     }
 
     @Override
-    public Optional<UserProfileDto> updateUserProfile(UserProfileDto userProfileDto) {
+    public Optional<UserProfileDto> update(UserProfileDto userProfileDto) {
         Long currentUserId = SecurityUtils.getCurrentUserId();
         UserEntity user = userRepository.findById(currentUserId).orElseThrow(() ->
                 new ResourceNotFoundException("Not found user with id: " + currentUserId));

@@ -1,6 +1,5 @@
 package com.booking.arena.dto.booking;
 
-import com.booking.arena.entity.arena.ArenaEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,12 +12,11 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationArenaDto {
-    private Long id;
     private Instant createdAt;
     private Instant bookingFrom;
     private Instant bookingTo;
     private String description;
     private Integer totalPrice;
     private String costumer;
-    private ArenaEntity arena;
+    private Long arenaId;
 }

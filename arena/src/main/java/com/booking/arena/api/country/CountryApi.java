@@ -1,9 +1,8 @@
-package com.booking.arena.controller.city;
+package com.booking.arena.api.country;
 
-import com.booking.arena.dto.address.CityDto;
 import com.booking.arena.dto.address.LocationDto;
 import com.booking.arena.exception.ResourceNotFoundException;
-import com.booking.arena.service.address.city.CityService;
+import com.booking.arena.service.address.country.CountryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,61 +17,61 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Cities", description = "API для работы с городами")
-@RequestMapping("/api/v1/city")
-public class CityController {
-    private final CityService cityService;
+@RequestMapping("/api/v1/country")
+@Tag(name = "Countries", description = "API для работы со странами")
+public class CountryApi {
+    private final CountryService countryService;
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = CityDto.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = List.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "404",content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
-            summary = "GET all cities",
-            description = "Позволяет получить все города"
+            summary = "GET all countries",
+            description = "Позволяет получить все страны"
     )
     @GetMapping
-    public ResponseEntity<?> getAllCities() {
-        return ResponseEntity.ok(cityService.getAllCities());
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(countryService.getAllCountries());
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = CityDto.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = LocationDto.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
-            summary = "GET{id} city by id",
-            description = "Позволяет получить город по id"
+            summary = "GET{id} country by id",
+            description = "Позволяет получить страну по id"
     )
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCityById(@PathVariable Long id) {
-        return ResponseEntity.ok(cityService.getCityById(id));
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(countryService.getCountryById(id));
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = CityDto.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = LocationDto.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
-            summary = "POST create city",
-            description = "Позволяет создать город"
+            summary = "POST create country",
+            description = "Позволяет создать страну"
     )
     @PostMapping
-    public ResponseEntity<?> createCity(@RequestBody CityDto cityDto) {
-        return ResponseEntity.ok(cityService.createCity(cityDto));
+    public ResponseEntity<?> create(@RequestBody LocationDto locationDto) {
+        return ResponseEntity.ok(countryService.createCountry(locationDto));
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = CityDto.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = LocationDto.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
-            summary = "PATCH update city by Id and new params in body",
-            description = "Позволяет изменить данные города, предназначен только для админа"
+            summary = "PATCH{id} update country by Id and new params in body",
+            description = "Позволяет изменить данные страны, предназначен только для админа"
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateCity(@PathVariable Long id, @RequestBody CityDto cityDto) {
-        return ResponseEntity.ok(cityService.updateCity(id, cityDto));
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody LocationDto locationDto) {
+        return ResponseEntity.ok(countryService.updateCountry(id, locationDto));
     }
 
     @ApiResponses({
@@ -80,12 +79,12 @@ public class CityController {
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
-            summary = "DELETE city by Id",
-            description = "Позволяет удалить город, только админ"
+            summary = "DELETE{id} country by Id",
+            description = "Позволяет удалить страну, только админ"
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCity(@PathVariable Long id) {
-        cityService.deleteCityById(id);
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        countryService.deleteCountryById(id);
         return ResponseEntity.noContent().build();
     }
 }

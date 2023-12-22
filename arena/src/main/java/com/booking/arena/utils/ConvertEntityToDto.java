@@ -6,6 +6,7 @@ import com.booking.arena.dto.address.LocationDto;
 import com.booking.arena.dto.arena.ArenaDto;
 import com.booking.arena.dto.arena.ArenaInfoDto;
 import com.booking.arena.dto.auth.SignUpDto;
+import com.booking.arena.dto.booking.ReservationArenaDto;
 import com.booking.arena.dto.user.RoleDto;
 import com.booking.arena.dto.user.UserDto;
 import com.booking.arena.dto.user.UserProfileDto;
@@ -13,6 +14,7 @@ import com.booking.arena.entity.address.Address;
 import com.booking.arena.entity.address.CityEntity;
 import com.booking.arena.entity.address.CountryEntity;
 import com.booking.arena.entity.arena.ArenaEntity;
+import com.booking.arena.entity.booking.ReservationArena;
 import com.booking.arena.entity.user.UserEntity;
 import com.booking.arena.entity.user.UserProfile;
 
@@ -96,6 +98,17 @@ public class ConvertEntityToDto {
                 .description(arena.getDescription())
                 .status(arena.isStatus())
                 .arenaInfo(arenaInfoToDto(arena))
+                .build();
+    }
+
+    public static ReservationArenaDto reservationArenaToDto(ReservationArena reservationArena) {
+        return ReservationArenaDto.builder()
+                .arenaId(reservationArena.getArena().getId())
+                .bookingFrom(reservationArena.getBookingFrom())
+                .bookingTo(reservationArena.getBookingTo())
+                .description(reservationArena.getDescription())
+                .totalPrice(reservationArena.getTotalPrice())
+                .costumer(reservationArena.getCostumer())
                 .build();
     }
 }
