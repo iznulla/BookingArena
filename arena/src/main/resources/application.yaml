@@ -15,17 +15,14 @@ spring:
       ddl-auto: ${DDL_AUTO}
       show_sql: true
 
-
-
-
 springdoc:
   api-docs:
-    enabled: true
-    resolve-schema-properties: true
+    enabled: ${API_DOCS_ENABLE}
+    resolve-schema-properties: ${RESOLVE_SCHEMA_PROPERTIES}
   swagger-ui:
-    enabled: true
-  default-produces-media-type: application/json
-  writer-with-default-pretty-printer: true
+    enabled: ${SWAGGER_UI_ENABLED}
+  default-produces-media-type: ${DEFAULT_PRODUCES_MEDIA_TYPE}
+  writer-with-default-pretty-printer: ${WRITER_WITH_DEFAULT_PRETTY_PRINTER}
 
 security:
   jwt:
