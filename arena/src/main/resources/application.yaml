@@ -5,7 +5,11 @@ spring:
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    password:
+
+  output:
+    ansi:
+      enabled: ALWAYS
 
   jpa:
     hibernate:
@@ -23,6 +27,23 @@ springdoc:
     enabled: ${SWAGGER_UI_ENABLED}
   default-produces-media-type: ${DEFAULT_PRODUCES_MEDIA_TYPE}
   writer-with-default-pretty-printer: ${WRITER_WITH_DEFAULT_PRETTY_PRINTER}
+
+
+logging:
+  level:
+    root: warn
+    org:
+      springframework:
+        web: error
+        hibernate: error
+  file:
+    name: application.log
+    max-size: 1MB
+    max-history: 10
+    pattern: LOG_DATEFORMAT_PATTERN
+
+
+
 
 security:
   jwt:
