@@ -52,20 +52,22 @@ public class ReservationServiceImpl implements ReservationService{
             ReservationArena reservationArena = ReservationArena.builder()
                     .createdAt(Instant.now())
                     .arena(arena)
-                    .bookingFrom(reservationArenaDto.getBookingFrom())
-                    .bookingTo(reservationArenaDto.getBookingTo())
                     .description(reservationArenaDto.getDescription())
                     .costumer(reservationArenaDto.getCostumer())
                     .totalPrice((int) (arena.getArenaInfo().getPrice() * (
                             reservationArenaDto.getBookingTo().getEpochSecond() -
                                     reservationArenaDto.getBookingFrom().getEpochSecond()) / 3600))
                     .build();
+            if (getByReservationByTime(arena, reservationArenaDto.getBookingFrom(), reservationArenaDto.getBookingTo())) {
+                reservationArena.setBookingFrom(reservationArenaDto.getBookingFrom());
+                reservationArena.setBookingTo(reservationArenaDto.getBookingTo());
+            } else {
+                throw new ResourceNotFoundException("Invalid, not free time");
+            }
             BookingUser bookingUser = new BookingUser();
             bookingUser.setBooking(reservationArena);
             if (SecurityUtils.getCurrentUserId() != null) {
-                bookingUser.setUser(userRepository.findById(SecurityUtils.getCurrentUserId()).orElseThrow(
-                        () -> new ResourceNotFoundException("Not found user with id: " + SecurityUtils.getCurrentUserId())
-                ));
+                bookingUser.setUser(userRepository.findById(SecurityUtils.getCurrentUserId()).orElseThrow());
                 bookingUser.setConsumer(SecurityUtils.getCurrentUsername());
             }
             reservationArena.setCostumer(reservationArenaDto.getCostumer());
@@ -89,13 +91,17 @@ public class ReservationServiceImpl implements ReservationService{
         );
         try {
             reservationArena.setArena(arena);
-            reservationArena.setBookingFrom(reservationArenaDto.getBookingFrom());
-            reservationArena.setBookingTo(reservationArenaDto.getBookingTo());
             reservationArena.setDescription(reservationArenaDto.getDescription());
             reservationArena.setCostumer(reservationArenaDto.getCostumer());
             reservationArena.setTotalPrice((int) (reservationArena.getArena().getArenaInfo().getPrice() * (
                     reservationArenaDto.getBookingTo().getEpochSecond()
                             - reservationArenaDto.getBookingFrom().getEpochSecond()) / 3600));
+            if (getByReservationByTime(arena, reservationArenaDto.getBookingFrom(), reservationArenaDto.getBookingTo())) {
+                reservationArena.setBookingFrom(reservationArenaDto.getBookingFrom());
+                reservationArena.setBookingTo(reservationArenaDto.getBookingTo());
+            } else {
+                throw new ResourceNotFoundException("Invalid, not free time");
+            }
             reservationArenaRepository.save(reservationArena);
             log.debug("Updated reservation arena with id: {}, from user by username: {}"
                     , reservationArena.getId(), SecurityUtils.getCurrentUsername());
@@ -111,5 +117,9 @@ public class ReservationServiceImpl implements ReservationService{
             reservationArenaRepository.deleteById(id);
             log.info("Reservation arena deleted by id: {}", id);
         }
+    }
+
+    private boolean getByReservationByTime(ArenaEntity arena, Instant from, Instant to) {
+        return arena.getReservationArena().stream().noneMatch(a -> a.getBookingFrom().isBefore(to) && a.getBookingTo().isAfter(from));
     }
 }

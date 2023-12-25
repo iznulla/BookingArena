@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddressDto {
     private String street;
-    private LocationDto country;
+    private CountryDto country;
     private CityDto city;
     private Double longitude;
     private Double latitude;

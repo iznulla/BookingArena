@@ -14,6 +14,7 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "arena_info")
 public class ArenaInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

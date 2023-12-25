@@ -2,7 +2,7 @@ package com.booking.arena.utils;
 
 import com.booking.arena.dto.address.AddressDto;
 import com.booking.arena.dto.address.CityDto;
-import com.booking.arena.dto.address.LocationDto;
+import com.booking.arena.dto.address.CountryDto;
 import com.booking.arena.dto.arena.ArenaDto;
 import com.booking.arena.dto.arena.ArenaInfoDto;
 import com.booking.arena.dto.auth.SignUpDto;
@@ -26,8 +26,8 @@ public class ConvertEntityToDto {
                 .build();
     }
 
-    public static LocationDto countryToDto(CountryEntity country) {
-        return LocationDto.builder()
+    public static CountryDto countryToDto(CountryEntity country) {
+        return CountryDto.builder()
                 .name(country.getName())
                 .build();
     }

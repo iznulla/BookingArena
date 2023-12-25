@@ -1,6 +1,7 @@
 package com.booking.arena.service.arena;
 
 import com.booking.arena.dto.arena.ArenaDto;
+import com.booking.arena.dto.arena.ArenaFiltersDto;
 import com.booking.arena.entity.arena.ArenaEntity;
 import com.booking.arena.entity.arena.ArenaInfo;
 import com.booking.arena.entity.user.UserEntity;
@@ -14,8 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+
+import java.awt.geom.Point2D;
+import java.time.Instant;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,12 +44,31 @@ public class ArenaServiceImpl implements ArenaService{
     }
 
     @Override
+    public List<ArenaDto> getByFilter(ArenaFiltersDto filters) {
+        Set<ArenaEntity> arenas;
+        if (!filters.getCity().isEmpty() && filters.getCity() != null) {
+            arenas = getByCity(arenaRepository.findAll(), filters.getCity());
+        } else {
+            arenas = new HashSet<>(arenaRepository.findAll());
+        }
+
+        if (filters.getFrom() != null && filters.getTo() != null) {
+            arenas = getByReservationByTime(arenas, filters.getFrom(), filters.getTo());
+        }
+        if (filters.getLongitude() != null && filters.getLatitude() != null) {
+            arenas = getSortedByDistance(arenas, filters.getLongitude()
+            , filters.getLatitude());
+        }
+        return arenas.stream().map(ConvertEntityToDto::arenaToDto).toList();
+    }
+
+    @Override
     public Optional<ArenaDto> create(ArenaDto arenaDto) {
         try {
             ArenaInfo arenaInfo = arenaInfoService.create(arenaDto.getArenaInfo()).orElseThrow(
                     () -> new ResourceNotFoundException("ArenaInfo is Not valid")
             );
-            UserEntity user = userRepository.findById(SecurityUtils.getCurrentUserId()).orElseThrow(
+            UserEntity user = userRepository.findById(Objects.requireNonNull(SecurityUtils.getCurrentUserId())).orElseThrow(
                     () -> new ResourceNotFoundException("User is Not valid")
             );
             ArenaEntity arena = ArenaEntity.builder()
@@ -86,5 +109,36 @@ public class ArenaServiceImpl implements ArenaService{
                 new ResourceNotFoundException("Not found arena with id: " + id));
         arenaRepository.deleteById(arena.getId());
         log.debug("Deleted arena with id: {}, from user by username: {}", arena.getId(), SecurityUtils.getCurrentUsername());
+    }
+
+    private Set<ArenaEntity> getByCity(List<ArenaEntity> all, String city) {
+        Set<ArenaEntity> filtered = new HashSet<>();
+        for (ArenaEntity arena : all) {
+            if (arena.getArenaInfo().getAddress().getCity().getName().equals(city)) {
+                filtered.add(arena);
+            }
+        }
+        return filtered;
+    }
+
+    private Set<ArenaEntity> getByReservationByTime(Set<ArenaEntity> arenas, Instant from, Instant to) {
+        return arenas.stream()
+                .filter(arena -> arena.getReservationArena().stream()
+                        .noneMatch(r -> r.getBookingFrom().isBefore(to) && r.getBookingTo().isAfter(from)))
+                .collect(Collectors.toSet());
+    }
+
+
+    private Set<ArenaEntity> getSortedByDistance(Set<ArenaEntity> filtered, Double lng, Double lat) {
+        Map<ArenaEntity, Double> distance = new HashMap<>();
+        for (ArenaEntity arena : filtered) {
+            distance.put(arena, Point2D.distance(arena.getArenaInfo().getAddress().getLongitude()
+                    , arena.getArenaInfo().getAddress().getLatitude(), lng, lat));
+        }
+        return distance.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

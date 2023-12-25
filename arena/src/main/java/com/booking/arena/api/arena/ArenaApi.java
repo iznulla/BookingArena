@@ -2,9 +2,11 @@ package com.booking.arena.api.arena;
 
 import com.booking.arena.dto.address.CityDto;
 import com.booking.arena.dto.arena.ArenaDto;
+import com.booking.arena.dto.arena.ArenaFiltersDto;
 import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.service.arena.ArenaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +15,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -85,6 +89,19 @@ public class ArenaApi {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         arenaService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ArenaDto.class)) }),
+            @ApiResponse(responseCode = "404",content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
+            @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
+    @Operation(
+            summary = "GET arena by filters",
+            description = "Позволяет получить отфильтрованный список"
+    )
+    @GetMapping("/filter")
+    public ResponseEntity<List<ArenaDto>> getByFilter(ArenaFiltersDto filters) {
+        return ResponseEntity.ok(arenaService.getByFilter(filters));
     }
 }
 

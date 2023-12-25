@@ -1,6 +1,6 @@
 package com.booking.arena.api.country;
 
-import com.booking.arena.dto.address.LocationDto;
+import com.booking.arena.dto.address.CountryDto;
 import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.service.address.country.CountryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +21,7 @@ public class CountryApi {
     private final CountryService countryService;
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = LocationDto.class))}),
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = CountryDto.class))}),
             @ApiResponse(responseCode = "404",content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
@@ -34,7 +34,7 @@ public class CountryApi {
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = LocationDto.class)) }),
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = CountryDto.class)) }),
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
@@ -47,7 +47,7 @@ public class CountryApi {
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = LocationDto.class)) }),
+            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = CountryDto.class)) }),
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
@@ -55,12 +55,12 @@ public class CountryApi {
             description = "Позволяет создать страну"
     )
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody LocationDto locationDto) {
-        return ResponseEntity.ok(countryService.create(locationDto));
+    public ResponseEntity<?> create(@RequestBody CountryDto countryDto) {
+        return ResponseEntity.ok(countryService.create(countryDto));
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = LocationDto.class)) }),
+            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = CountryDto.class)) }),
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
@@ -68,8 +68,8 @@ public class CountryApi {
             description = "Позволяет изменить данные страны, предназначен только для админа"
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody LocationDto locationDto) {
-        return ResponseEntity.ok(countryService.update(id, locationDto));
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CountryDto countryDto) {
+        return ResponseEntity.ok(countryService.update(id, countryDto));
     }
 
     @ApiResponses({
