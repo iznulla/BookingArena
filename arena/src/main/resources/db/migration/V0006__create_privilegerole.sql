@@ -1,0 +1,13 @@
+insert into role_privilege (role_id, privilege_id) values (1, 1);
+insert into role_privilege (role_id, privilege_id) values (1, 2);
+insert into role_privilege (role_id, privilege_id) values (1, 3);
+insert into role_privilege (role_id, privilege_id) values (1, 4);
+insert into role_privilege (role_id, privilege_id) values (1, 5);
+insert into role_privilege (role_id, privilege_id) values (1, 6);
+insert into role_privilege (role_id, privilege_id) values (1, 7);
+insert into role_privilege (role_id, privilege_id) values (1, 8);
+insert into role_privilege (role_id, privilege_id) values (1, 9);
+insert into role_privilege (role_id, privilege_id) values (1, 10);
+insert into role_privilege (role_id, privilege_id) values (1, 11);
+insert into role_privilege (role_id, privilege_id) values (1, 12);
+insert into role_privilege (role_id, privilege_id) values (1, 13);

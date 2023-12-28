@@ -34,25 +34,28 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public Optional<UserProfileDto> update(UserProfileDto userProfileDto) {
-        Long currentUserId = SecurityUtils.getCurrentUserId();
-        UserEntity user = userRepository.findById(currentUserId).orElseThrow(() ->
-                new ResourceNotFoundException("Not found user with id: " + currentUserId));
+    public Optional<UserProfileDto> update(Long id, UserProfileDto userProfileDto) {
+        UserEntity user = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Not found user with id: " + id));
         UserProfile profile = userProfileRepository.findByUser(user).orElseThrow();
-
-        user.setUsername(userProfileDto.getUsername());
-        user.setEmail(userProfileDto.getEmail());
-
-        profile.setName(userProfileDto.getName());
-        profile.setSurname(userProfileDto.getSurname());
-        profile.setUpdatedAt(Instant.now());
-        Address address = addressService.getById(profile.getAddress().getId()).orElseThrow(
-                () -> new ResourceNotFoundException("Not found address with id: " + profile.getAddress().getId())
-        );
-        addressService.update(address.getId(), userProfileDto.getAddress()).orElseThrow();
-        userProfileRepository.save(profile);
-        userRepository.save(user);
-        return Optional.of(ConvertEntityToDto.userProfileToDto(profile));
+        try {
+            if (id.equals(SecurityUtils.getCurrentUserId())) {
+                user.setUsername(userProfileDto.getUsername());
+                user.setEmail(userProfileDto.getEmail());
+                profile.setName(userProfileDto.getName());
+                profile.setSurname(userProfileDto.getSurname());
+                profile.setUpdatedAt(Instant.now());
+                Address address = addressService.getById(profile.getAddress().getId()).orElseThrow(
+                        () -> new ResourceNotFoundException("Not found address with id: " + profile.getAddress().getId())
+                );
+                addressService.update(address.getId(), userProfileDto.getAddress()).orElseThrow();
+                userProfileRepository.save(profile);
+                userRepository.save(user);
+            }
+            return Optional.of(ConvertEntityToDto.userProfileToDto(profile));
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("invalid input data\n"+e.getMessage());
+        }
     }
 
 }

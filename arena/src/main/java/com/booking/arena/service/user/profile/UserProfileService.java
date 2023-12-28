@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface UserProfileService {
     Optional<UserProfileDto> getById(Long id);
-    Optional<UserProfileDto> update(UserProfileDto userProfileDto);
+    Optional<UserProfileDto> update(Long id, UserProfileDto userProfileDto);
 
 }

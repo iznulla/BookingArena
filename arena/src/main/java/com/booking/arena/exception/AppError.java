@@ -1,8 +1,6 @@
 package com.booking.arena.exception;
 
-import lombok.Data;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 

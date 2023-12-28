@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,9 +30,10 @@ public class ProfileApi {
             summary = "PATCH{id} update user by Id and new params in body",
             description = "Позволяет изменить данные пользователя, предназначен только для аутенцифицированного пользователя"
     )
-    @PatchMapping
+
+    @PatchMapping("/{id}")
     public ResponseEntity<?> update(@RequestParam Long id, @RequestBody UserProfileDto userProfileDto) {
-        return new ResponseEntity<>(userProfileService.update(userProfileDto), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(userProfileService.update(id, userProfileDto), HttpStatus.valueOf(201));
     }
 
     @ApiResponses({
@@ -42,6 +44,7 @@ public class ProfileApi {
             summary = "GET{id} profile by user id",
             description = "Позволяет получить пользователей по id"
     )
+    @PreAuthorize("hasAuthority('READ')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@RequestParam Long id) {
         return new ResponseEntity<>(userProfileService.getById(id), HttpStatus.valueOf(200));

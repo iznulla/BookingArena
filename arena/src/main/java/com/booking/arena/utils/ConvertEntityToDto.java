@@ -7,6 +7,7 @@ import com.booking.arena.dto.arena.ArenaDto;
 import com.booking.arena.dto.arena.ArenaInfoDto;
 import com.booking.arena.dto.auth.SignUpDto;
 import com.booking.arena.dto.booking.ReservationArenaDto;
+import com.booking.arena.dto.user.PrivilegeDto;
 import com.booking.arena.dto.user.RoleDto;
 import com.booking.arena.dto.user.UserDto;
 import com.booking.arena.dto.user.UserProfileDto;
@@ -15,12 +16,17 @@ import com.booking.arena.entity.address.CityEntity;
 import com.booking.arena.entity.address.CountryEntity;
 import com.booking.arena.entity.arena.ArenaEntity;
 import com.booking.arena.entity.booking.ReservationArena;
+import com.booking.arena.entity.user.Privilege;
+import com.booking.arena.entity.user.RoleEntity;
 import com.booking.arena.entity.user.UserEntity;
 import com.booking.arena.entity.user.UserProfile;
+
+import java.util.stream.Collectors;
 
 public class ConvertEntityToDto {
     public static CityDto cityToDto(CityEntity city) {
         return CityDto.builder()
+                .id(city.getId())
                 .name(city.getName())
                 .countryName(city.getCountry().getName())
                 .build();
@@ -28,6 +34,7 @@ public class ConvertEntityToDto {
 
     public static CountryDto countryToDto(CountryEntity country) {
         return CountryDto.builder()
+                .id(country.getId())
                 .name(country.getName())
                 .build();
     }
@@ -56,22 +63,18 @@ public class ConvertEntityToDto {
 
     public static UserDto userToDto(UserEntity user) {
         return UserDto.builder()
+                .id(user.getUserId())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .role(RoleDto.builder()
-                        .name(user.getRole().getName())
-                        .build())
+                .role(roleToDto(user.getRole()))
                 .isActive(user.isActive())
-                .userProfile(UserProfileDto.builder()
-                        .name(user.getUserProfile().getName())
-                        .surname(user.getUserProfile().getSurname())
-                        .address(addressToDto(user.getUserProfile().getAddress()))
-                        .build())
+                .userProfile(userProfileToDto(user.getUserProfile()))
                 .build();
     }
 
     public static UserProfileDto userProfileToDto(UserProfile userProfile) {
         return UserProfileDto.builder()
+                .id(userProfile.getId())
                 .username(userProfile.getUser().getUsername())
                 .email(userProfile.getUser().getEmail())
                 .name(userProfile.getName())
@@ -82,6 +85,7 @@ public class ConvertEntityToDto {
 
     public static ArenaInfoDto arenaInfoToDto(ArenaEntity arena) {
         return ArenaInfoDto.builder()
+                .id(arena.getId())
                 .phone(arena.getArenaInfo().getPhone())
                 .price(arena.getArenaInfo().getPrice())
                 .workedFrom(arena.getArenaInfo().getWorkedFrom())
@@ -94,10 +98,12 @@ public class ConvertEntityToDto {
 
     public static ArenaDto arenaToDto(ArenaEntity arena) {
         return ArenaDto.builder()
+                .id(arena.getId())
                 .name(arena.getName())
                 .description(arena.getDescription())
                 .status(arena.isStatus())
                 .arenaInfo(arenaInfoToDto(arena))
+                .image(arena.getImage())
                 .build();
     }
 
@@ -109,6 +115,21 @@ public class ConvertEntityToDto {
                 .description(reservationArena.getDescription())
                 .totalPrice(reservationArena.getTotalPrice())
                 .costumer(reservationArena.getCostumer())
+                .build();
+    }
+
+    public static PrivilegeDto privilegeToDto(Privilege privilege) {
+        return PrivilegeDto.builder()
+                .name(privilege.getName())
+                .build();
+    }
+
+    public static RoleDto roleToDto(RoleEntity role) {
+        return RoleDto.builder()
+                .name(role.getName())
+                .privileges(role.getRolePrivileges().stream()
+                        .map(privilege -> privilegeToDto(privilege.getPrivilege()))
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

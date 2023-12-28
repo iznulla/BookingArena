@@ -11,12 +11,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/country")
 @Tag(name = "Countries", description = "API для работы со странами")
+@PreAuthorize("hasAuthority('CREATE')")
 public class CountryApi {
     private final CountryService countryService;
 

@@ -8,17 +8,22 @@ import com.booking.arena.entity.user.UserEntity;
 import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.repository.arena.ArenaRepository;
 import com.booking.arena.repository.user.UserRepository;
+import com.booking.arena.service.filesistem.ImageService;
 import com.booking.arena.utils.ConvertEntityToDto;
+import com.booking.arena.utils.DeserializeJson;
 import com.booking.arena.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.awt.geom.Point2D;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,6 +34,7 @@ public class ArenaServiceImpl implements ArenaService{
     private final ArenaRepository arenaRepository;
     private final ArenaInfoService arenaInfoService;
     private final UserRepository userRepository;
+    private final ImageService imageService;
 
     @Override
     public Optional<ArenaDto> getById(Long id) {
@@ -62,9 +68,21 @@ public class ArenaServiceImpl implements ArenaService{
         return arenas.stream().map(ConvertEntityToDto::arenaToDto).toList();
     }
 
+    @SneakyThrows
+    private void uploadImage(ArenaEntity arena, ArenaDto object) {
+        if (object.getImageFile() == null) {
+            return;
+        }
+        Optional.ofNullable(object.getImageFile()).filter(Predicate.not(MultipartFile::isEmpty))
+                .ifPresent(image -> arena.setImage(image.getOriginalFilename()));
+        imageService.upload(arena.getImage(), object.getImageFile().getInputStream());
+    }
+
     @Override
-    public Optional<ArenaDto> create(ArenaDto arenaDto) {
+    public Optional<ArenaDto> create(String arenaDtoFromStr, MultipartFile file) {
         try {
+            ArenaDto arenaDto = DeserializeJson.get(arenaDtoFromStr, ArenaDto.class);
+            arenaDto.setImageFile(file);
             ArenaInfo arenaInfo = arenaInfoService.create(arenaDto.getArenaInfo()).orElseThrow(
                     () -> new ResourceNotFoundException("ArenaInfo is Not valid")
             );
@@ -78,6 +96,7 @@ public class ArenaServiceImpl implements ArenaService{
                     .user(user)
                     .status(true)
                     .build();
+            uploadImage(arena, arenaDto);
             arenaInfo.setArena(arena);
             arenaRepository.save(arena);
             log.info("Create arena with id: {}, from user by username: {}", arena.getId(), user.getUsername());
@@ -88,13 +107,16 @@ public class ArenaServiceImpl implements ArenaService{
     }
 
     @Override
-    public Optional<ArenaDto> update(Long id, ArenaDto arenaDto) {
+    public Optional<ArenaDto> update(Long id, String arenaDtoFromStr, MultipartFile file) {
         ArenaEntity arena = arenaRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found arena with id: " + id));
         try {
+            ArenaDto arenaDto = DeserializeJson.get(arenaDtoFromStr, ArenaDto.class);
+            arenaDto.setImageFile(file);
             arena.setName(arenaDto.getName());
             arena.setDescription(arenaDto.getDescription());
             arena.setArenaInfo(arenaInfoService.update(arena.getArenaInfo().getId(), arenaDto.getArenaInfo()).orElseThrow());
+            uploadImage(arena, arenaDto);
             arenaRepository.save(arena);
             log.debug("Updated arena with id: {}, from user by username: {}", arena.getId(), SecurityUtils.getCurrentUsername());
             return Optional.of(ConvertEntityToDto.arenaToDto(arena));

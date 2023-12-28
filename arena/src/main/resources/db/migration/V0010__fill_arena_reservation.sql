@@ -8,6 +8,7 @@ insert into address (street, country_id, city_id, longitude, latitude) values ('
 insert into address (street, country_id, city_id, longitude, latitude) values ('Zilolbaht', 1, 2, 39.64451473443719, 66.95633480032);--7
 insert into address (street, country_id, city_id, longitude, latitude) values ('Travmatologiya', 1, 2, 39.67975328370735, 66.91646886815883);--8
 insert into address (street, country_id, city_id, longitude, latitude) values ('Yunusabad', 1, 1, 39.66293502898839, 66.93413056090466);--9
+insert into address (street, country_id, city_id, longitude, latitude) values ('HOME', 1, 1, 39.66293502898839, 66.93413056090466);--10
 
 insert into users (username, password, email, role_id, is_active) values ('user', 'user', 'user', 1, 'true');
 insert into user_profile (name, surname, user_id, address_id) values ('user', 'user', 1, 9);

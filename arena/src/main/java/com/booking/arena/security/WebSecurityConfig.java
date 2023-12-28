@@ -42,7 +42,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(registry ->
                         registry
                                 .requestMatchers("/login").permitAll()
-                                .requestMatchers("/users/*/verify").permitAll()
+                                .requestMatchers("/api/v1/users/*/verify").permitAll()
+                                .requestMatchers("/api/v1/users/*/resend").permitAll()
                                 .requestMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
                                 .requestMatchers("/api/v1/reservation/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()

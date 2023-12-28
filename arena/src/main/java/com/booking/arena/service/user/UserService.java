@@ -13,6 +13,8 @@ public interface UserService {
     Optional<UserDto> getUserByUsername(String username);
     Optional<UserDto> getById(Long id);
     Optional<UserDto> update(Long id, UserUpdateDto userDto);
+    public boolean verification(Long id, String code);
+    public void resendVerificationCode(Long id);
     void delete(Long id);
 //    boolean verification(Long id, String code);
 }

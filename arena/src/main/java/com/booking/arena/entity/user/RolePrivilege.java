@@ -1,6 +1,8 @@
 package com.booking.arena.entity.user;
 
 
+import com.booking.arena.dto.user.PrivilegeDto;
+import com.booking.arena.dto.user.RoleDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,17 +26,17 @@ public class RolePrivilege {
     @JoinColumn(name = "role_id")
     private RoleEntity role;
 
-//    public PrivilegeDto getPrivilegeDto() {
-//        return PrivilegeDto.builder()
-//                .name(privilege.getName())
-//                .build();
-//    }
-//
-//    public RoleDto getRole() {
-//        return RoleDto.builder()
-//                .name(role.getName())
-//                .build();
-//    }
+    public PrivilegeDto getPrivilegeDto() {
+        return PrivilegeDto.builder()
+                .name(privilege.getName())
+                .build();
+    }
+
+    public RoleDto getRole() {
+        return RoleDto.builder()
+                .name(role.getName())
+                .build();
+    }
 
     public void setPrivilege(Privilege privilege) {
         this.privilege = privilege;

@@ -9,11 +9,13 @@ import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.repository.user.PrivilegeRepository;
 import com.booking.arena.repository.user.RolePrivilegeRepository;
 import com.booking.arena.repository.user.RoleRepository;
+import com.booking.arena.utils.ConvertEntityToDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.relation.Role;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -29,54 +31,62 @@ public class RoleServiceImpl implements RoleService {
 
 
     @Override
-    public Optional<RoleEntity> getByName(String name) {
-        return Optional.of(roleRepository.findByName(name).orElseThrow(() ->
-                new ResourceNotFoundException("Not found role with name: " + name)));
+    public Optional<RoleDto> getByName(String name) {
+        return Optional.of(ConvertEntityToDto.roleToDto(roleRepository.findByName(name).orElseThrow(() ->
+                new ResourceNotFoundException("Not found role with name: " + name))));
     }
 
     @Override
-    public Optional<RoleEntity> getById(Long id) {
-        return Optional.of(roleRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Not found role with id: " + id)));
+    public Optional<RoleDto> getById(Long id) {
+        return Optional.of(ConvertEntityToDto.roleToDto(roleRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Not found role with id: " + id))));
     }
 
     @Override
-    public List<RoleEntity> getAll() {
-        return roleRepository.findAll();
+    public List<RoleDto> getAll() {
+        return roleRepository.findAll().stream().map(ConvertEntityToDto::roleToDto).toList();
     }
 
     @Override
-    public Optional<RoleEntity> update(Long id, RoleDto roleDto) {
+    public Optional<RoleDto> update(Long id, RoleDto roleDto) {
         RoleEntity role = roleRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found role with id: " + id));
         role.setName(roleDto.getName());
-        for (PrivilegeDto p : roleDto.getPrivileges()) {
-            Privilege privilege = privilegeRepository.findByName(p.getName()).orElseThrow(() ->
-                    new ResourceNotFoundException("Not found privilege with name: " + p.getName()));
-            RolePrivilege rolePrivilege = new RolePrivilege();
-            rolePrivilege.setPrivilege(privilege);
-            rolePrivilege.setRole(role);
+        try {
+            for (PrivilegeDto p : roleDto.getPrivileges()) {
+                Privilege privilege = privilegeRepository.findByName(p.getName()).orElseThrow(() ->
+                        new ResourceNotFoundException("Not found privilege with name: " + p.getName()));
+                RolePrivilege rolePrivilege = new RolePrivilege();
+                rolePrivilege.setPrivilege(privilege);
+                rolePrivilege.setRole(role);
+            }
+            role.setUpdatedAt(Instant.now());
+            roleRepository.save(role);
+            return Optional.of(ConvertEntityToDto.roleToDto(role));
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Invalid role details" + e.getMessage());
         }
-        role.setUpdatedAt(Instant.now());
-        roleRepository.save(role);
-        return Optional.of(role);
     }
 
     @Override
-    public Optional<RoleEntity> create(RoleDto roleDto) {
+    public Optional<RoleDto> create(RoleDto roleDto) {
         RoleEntity role = new RoleEntity();
-        for (PrivilegeDto p : roleDto.getPrivileges()) {
-            Privilege privilege = privilegeRepository.findByName(p.getName()).orElseThrow(() ->
-                    new ResourceNotFoundException("Not found privilege with name: " + p.getName()));
-            RolePrivilege rolePrivilege = new RolePrivilege();
-            rolePrivilege.setPrivilege(privilege);
-            rolePrivilege.setRole(role);
+        try {
+            for (PrivilegeDto p : roleDto.getPrivileges()) {
+                Privilege privilege = privilegeRepository.findByName(p.getName()).orElseThrow(() ->
+                        new ResourceNotFoundException("Not found privilege with name: " + p.getName()));
+                RolePrivilege rolePrivilege = new RolePrivilege();
+                rolePrivilege.setPrivilege(privilege);
+                rolePrivilege.setRole(role);
+            }
+            role.setName(roleDto.getName());
+            role.setCreatedAt(Instant.now());
+            role.setUpdatedAt(Instant.now());
+            roleRepository.save(role);
+            return Optional.of(ConvertEntityToDto.roleToDto(role));
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Invalid role details" + e.getMessage());
         }
-        role.setName(roleDto.getName());
-        role.setCreatedAt(Instant.now());
-        role.setUpdatedAt(Instant.now());
-        roleRepository.save(role);
-        return Optional.of(role);
     }
 
     @Override

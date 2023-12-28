@@ -21,7 +21,7 @@ public class AuthController {
 
     @PostMapping
     public LoginResponseDto login(@RequestBody LoginUserDto loginUserDto) {
-        log.debug("Login user : username {}", loginUserDto.getUsername());
+        log.info("Login user : username {}", loginUserDto.getUsername());
         return loginManagerService.attemptLogin(loginUserDto.getUsername(), loginUserDto.getPassword());
     }
 }

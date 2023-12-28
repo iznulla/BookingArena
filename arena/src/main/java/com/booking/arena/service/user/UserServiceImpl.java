@@ -11,6 +11,8 @@ import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.repository.user.RoleRepository;
 import com.booking.arena.repository.user.UserRepository;
 import com.booking.arena.service.address.AddressService;
+import com.booking.arena.service.email.EmailServiceImpl;
+import com.booking.arena.service.email.EmailVerificationService;
 import com.booking.arena.utils.ConvertEntityToDto;
 import lombok.Builder;
 import lombok.Data;
@@ -34,8 +36,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AddressService addressService;
-    //    private final EmailServiceImpl emailService;
-//    private final EmailVerificationService emailVerificationService;
+    private final EmailServiceImpl emailService;
+    private final EmailVerificationService emailVerificationService;
     private final RoleRepository roleRepository;
 
     @Override
@@ -63,7 +65,7 @@ public class UserServiceImpl implements UserService {
         profile.setAddress(address);
         user.setUserProfile(profile);
         userRepository.save(user);
-//        emailService.sendSimpleMessage(userDto.getUsername(), "Verify Code", emailVerificationService.generateCode());
+        emailService.sendSimpleMessage(signUpDto.getEmail(), "Verify Code", emailVerificationService.generateCode());
         log.debug("Created user by name {}", signUpDto.getUserProfile().getName());
         return Optional.of(Optional.of(ConvertEntityToDto.userToDto(user)).orElseThrow());
     }
@@ -108,7 +110,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setActive(userDto.isActive());
         userRepository.save(user);
-        log.debug("Updated user by id {}", id);
+        log.warn("Updated user by id {}", id);
         return Optional.of(ConvertEntityToDto.userToDto(user));
     }
 
@@ -122,24 +124,36 @@ public class UserServiceImpl implements UserService {
                     String.format("User with id %s not found", id));
         }
     }
-//    @Override
-//    public boolean verification(Long id, String code) {
-//        UserEntity user = repository.findById(id).orElseThrow(() -> new NotFoundException(
-//                String.format("User with id %s not found", id)
-//        ));
-//        if (user.isActive()) {
-//            return false;
-//        }
-//        Instant now = Instant.now();
-//        if (!now.isBefore(emailVerificationService.getExpiredDate())) {
-//            return false;
-//        }
-//        if (!code.equals(emailVerificationService.getVerifyCode())) {
-//            return false;
-//        }
-//        user.setActive(true);
-//        repository.save(user);
-//        log.debug("User verified by id {}", id);
-//        return true;
-//    }
+    @Override
+    public boolean verification(Long id, String code) {
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("User with id %s not found", id)
+        ));
+        if (user.isActive()) {
+            return false;
+        }
+        Instant now = Instant.now();
+        try {
+            if (!now.isBefore(emailVerificationService.getExpiredDate())) {
+                return false;
+        }
+        } catch (Exception e) {
+            throw new ResourceNotFoundException(
+                "verification time expired"
+            );
+        }
+        if (!code.equals(emailVerificationService.getVerifyCode())) {
+            return false;
+        }
+        user.setActive(true);
+        userRepository.save(user);
+        log.debug("User verified by id {}", id);
+        return true;
+    }
+
+    public void resendVerificationCode(Long id) {
+        emailService.sendSimpleMessage(userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("User with id %s not found", id)
+        )).getEmail(), "Verify Code", emailVerificationService.generateCode());
+    }
 }

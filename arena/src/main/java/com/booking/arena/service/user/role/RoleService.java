@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoleService {
-    Optional<RoleEntity> getByName(String name);
-    Optional<RoleEntity> getById(Long id);
-    List<RoleEntity> getAll();
-    Optional<RoleEntity> update(Long id, RoleDto roleDto);
-    Optional<RoleEntity> create(RoleDto roleDto);
+    Optional<RoleDto> getByName(String name);
+    Optional<RoleDto> getById(Long id);
+    List<RoleDto> getAll();
+    Optional<RoleDto> update(Long id, RoleDto roleDto);
+    Optional<RoleDto> create(RoleDto roleDto);
     void delete(Long id);
     void deletePrivilege(Long roleId, Long privilegeId);
 

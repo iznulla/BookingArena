@@ -28,6 +28,9 @@ public class ArenaEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "image")
+    private String image;
+
     @Column(name = "status", columnDefinition = "boolean default true")
     private boolean status = true;
 

@@ -5,12 +5,7 @@ spring:
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
-    password:
-
-  output:
-    ansi:
-      enabled: ALWAYS
-
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       dialect: ${DATABASE_DIALECT}
@@ -18,6 +13,26 @@ spring:
         driver_class: ${DB_DRIVER_CLASS}
       ddl-auto: ${DDL_AUTO}
       show_sql: true
+      format_sql: true
+  output:
+    ansi:
+      enabled: ALWAYS
+  servlet:
+    multipart:
+      enabled: ${MULTIPART_ENABLE}
+      max-file-size: ${MAX_FILE_SIZE}
+      max-request-size: ${MAX_REQUEST_SIZE}
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: ${PROPERTIES_MAIL_SMTP_AUTH}
+          starttls:
+            enable: ${PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE}
 
 springdoc:
   api-docs:
@@ -31,18 +46,19 @@ springdoc:
 
 logging:
   level:
-    root: warn
+    root: ${ROOT_LOGGING}
     org:
       springframework:
-        web: error
-        hibernate: error
+        web: ${WEB_LOGGING_LEVEL}
+        hibernate: ${HIBERNATE_LOGGING_LEVEL}
   file:
-    name: application.log
-    max-size: 1MB
-    max-history: 10
-    pattern: LOG_DATEFORMAT_PATTERN
+    name: ${LOGGING_FILE_NAME}
+    max-size: ${LOGGING_MAX_SIZE}
+    max-history: ${LOGGING_HISTORY}
 
-
+app:
+  image:
+    bucket: ${SOURCE_BUCKET}
 
 
 security:

@@ -4,6 +4,7 @@ import com.booking.arena.dto.user.PrivilegeDto;
 import com.booking.arena.entity.user.Privilege;
 import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.repository.user.PrivilegeRepository;
+import com.booking.arena.utils.ConvertEntityToDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,35 +22,44 @@ public class PrivilegeServiceImpl implements PrivilegeService {
     private final PrivilegeRepository privilegeRepository;
 
     @Override
-    public Optional<Privilege> create(PrivilegeDto privilegeDto) {
-        log.info("Privilege created: {}", privilegeDto.getName());
-        return Optional.of(privilegeRepository.save(Privilege.builder()
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
-                .name(privilegeDto.getName()).build()));
+    public Optional<PrivilegeDto> create(PrivilegeDto privilegeDto) {
+        try {
+            log.info("Privilege created: {}", privilegeDto.getName());
+            return Optional.of(ConvertEntityToDto.privilegeToDto(privilegeRepository.save(Privilege.builder()
+                    .createdAt(Instant.now())
+                    .updatedAt(Instant.now())
+                    .name(privilegeDto.getName()).build())));
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Invalid privilege details\n" + e.getMessage());
+        }
+
     }
 
     @Override
-    public Optional<Privilege> getById(Long id) {
-        return Optional.of(privilegeRepository.findById(id).orElseThrow(
+    public Optional<PrivilegeDto> getById(Long id) {
+        return Optional.of(ConvertEntityToDto.privilegeToDto(privilegeRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Not found privilege with id: " + id)
-        ));
+        )));
     }
 
     @Override
-    public Optional<Privilege> update(Long id, PrivilegeDto privilegeDto) {
+    public Optional<PrivilegeDto> update(Long id, PrivilegeDto privilegeDto) {
         Privilege privilege = privilegeRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found privilege with id: " + id));
-        privilege.setName(privilegeDto.getName());
-        privilege.setUpdatedAt(Instant.now());
-        privilegeRepository.save(privilege);
-        log.info("Privilege updated: {}", privilegeDto.getName());
-        return Optional.of(privilege);
+        try {
+            privilege.setName(privilegeDto.getName());
+            privilege.setUpdatedAt(Instant.now());
+            privilegeRepository.save(privilege);
+            log.info("Privilege updated: {}", privilegeDto.getName());
+            return Optional.of(ConvertEntityToDto.privilegeToDto(privilege));
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Invalid privilege details\n" + e.getMessage());
+        }
     }
 
     @Override
-    public Optional<List<Privilege>> getAll() {
-        return Optional.of(privilegeRepository.findAll().stream().toList());
+    public Optional<List<PrivilegeDto>> getAll() {
+        return Optional.of(privilegeRepository.findAll().stream().map(ConvertEntityToDto::privilegeToDto).toList());
     }
 
     @Override

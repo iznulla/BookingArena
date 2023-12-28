@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,6 +29,7 @@ public class ReservationApi {
             summary = "GET all reservations",
             description = "Позволяет получить все бронирования спорт-комплексов"
     )
+    @PreAuthorize("hasAuthority('UPDATE_RESERVATION')")
     @GetMapping
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(reservationService.getAll());
@@ -67,6 +69,7 @@ public class ReservationApi {
             summary = "PATCH{id} update arena by Id and new params in body",
             description = "Позволяет изменить данные бронирования спорт-комплекса, предназначен только для админа и менеджера"
     )
+    @PreAuthorize("hasAuthority('UPDATE_RESERVATION')")
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ReservationArenaDto reservationArenaDto) {
         return ResponseEntity.ok(reservationService.update(id, reservationArenaDto));
@@ -80,6 +83,7 @@ public class ReservationApi {
             summary = "DELETE{id} reservation by Id",
             description = "Позволяет удалить бронь спорт-комплекса по id, только админ"
     )
+    @PreAuthorize("hasAuthority('UPDATE_RESERVATION')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         reservationService.delete(id);
