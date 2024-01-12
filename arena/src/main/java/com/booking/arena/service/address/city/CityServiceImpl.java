@@ -30,30 +30,40 @@ public class CityServiceImpl implements CityService {
     public Optional<CityDto> create(CityDto cityDto) {
         CountryEntity country = countryRepository.findByName(cityDto.getCountryName()).orElseThrow(() ->
                 new ResourceNotFoundException("Not found country with id: " + cityDto.getId()));
-        CityEntity city = CityEntity.builder()
-                .name(cityDto.getName())
-                .build();
-        city.setCountry(country);
-        city.setCreatedAt(Instant.now());
-        city.setUpdatedAt(Instant.now());
-        cityRepository.save(city);
-        log.info("City created: {}", city.getName());
-        return Optional.of(CityDto.builder()
-                .name(city.getName())
-                .build());
+        try {
+            CityEntity city = CityEntity.builder()
+                    .name(cityDto.getName())
+                    .build();
+            city.setCountry(country);
+            city.setCreatedAt(Instant.now());
+            city.setUpdatedAt(Instant.now());
+            cityRepository.save(city);
+            log.info("City created: {}", city.getName());
+            return Optional.of(CityDto.builder()
+                    .name(city.getName())
+                    .build());
+        } catch (Exception e) {
+            log.error("Invalid city details\n" + e.getMessage());
+            throw new ResourceNotFoundException("Invalid city details\n");
+        }
     }
 
     @Override
     public Optional<CityDto> update(Long id, CityDto cityDto) {
         CityEntity city = cityRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found city with id: " + id));
-        city.setName(cityDto.getName());
-        city.setUpdatedAt(Instant.now());
-        cityRepository.save(city);
-        log.info("City updated: {}", city.getName());
-        return Optional.of(CityDto.builder()
-                .name(city.getName())
-                .build());
+        try {
+            city.setName(cityDto.getName());
+            city.setUpdatedAt(Instant.now());
+            cityRepository.save(city);
+            log.info("City updated: {}", city.getName());
+            return Optional.of(CityDto.builder()
+                    .name(city.getName())
+                    .build());
+        } catch (Exception e) {
+            log.error("Invalid city details\n" + e.getMessage());
+            throw new ResourceNotFoundException("Invalid city details\n" + e.getMessage());
+        }
     }
 
     @Override

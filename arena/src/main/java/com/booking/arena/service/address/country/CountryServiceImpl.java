@@ -26,16 +26,22 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public Optional<CountryDto> create(CountryDto countryDto) {
-        CountryEntity country = CountryEntity.builder()
-                .name(countryDto.getName())
-                .build();
-        country.setCreatedAt(Instant.now());
-        country.setUpdatedAt(Instant.now());
-        countryRepository.save(country);
-        log.info("Country created: {}", country.getName());
-        return Optional.of(CountryDto.builder()
-                .name(country.getName())
-                .build());
+        try {
+            CountryEntity country = CountryEntity.builder()
+                    .name(countryDto.getName())
+                    .build();
+            country.setCreatedAt(Instant.now());
+            country.setUpdatedAt(Instant.now());
+            countryRepository.save(country);
+            log.info("Country created: {}", country.getName());
+            return Optional.of(CountryDto.builder()
+                    .name(country.getName())
+                    .build());
+        } catch (Exception e) {
+            log.error("Invalid country details\n" + e.getMessage());
+            throw new ResourceNotFoundException("Invalid country details\n");
+        }
+
     }
 
     @Override
@@ -43,13 +49,18 @@ public class CountryServiceImpl implements CountryService {
         CountryEntity country = countryRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found country with id: " + id)
         );
-        country.setName(countryDto.getName());
-        country.setUpdatedAt(Instant.now());
-        countryRepository.save(country);
-        log.info("Country updated: {}", country);
-        return Optional.of(CountryDto.builder()
-                .name(country.getName())
-                .build());
+        try {
+            country.setName(countryDto.getName());
+            country.setUpdatedAt(Instant.now());
+            countryRepository.save(country);
+            log.info("Country updated: {}", country);
+            return Optional.of(CountryDto.builder()
+                    .name(country.getName())
+                    .build());
+        } catch (Exception e) {
+            log.error("Invalid country details\n" + e.getMessage());
+            throw new ResourceNotFoundException("Invalid country details\n" + e.getMessage());
+        }
     }
 
     @Override

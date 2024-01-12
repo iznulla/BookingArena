@@ -1,6 +1,5 @@
 package com.booking.arena.service.address;
 
-
 import com.booking.arena.dto.address.AddressDto;
 import com.booking.arena.entity.address.Address;
 import com.booking.arena.entity.address.CityEntity;
@@ -10,6 +9,7 @@ import com.booking.arena.repository.address.AddressRepository;
 import com.booking.arena.repository.address.CityRepository;
 import com.booking.arena.repository.address.CountryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class AddressServiceImpl implements AddressService {
@@ -31,23 +32,28 @@ public class AddressServiceImpl implements AddressService {
                 new ResourceNotFoundException("No correspond to any country"));
         CityEntity city = cityRepository.findByName(addressDto.getCity().getName()).orElseThrow(() ->
                 new ResourceNotFoundException("No correspond to any city"));
-
         Address address = new Address();
-        address.setCountry(country);
-        address.setCity(city);
-        address.setStreet(addressDto.getStreet());
-        address.setLongitude(addressDto.getLongitude());
-        address.setLatitude(addressDto.getLatitude());
-        address.setCreatedAt(Instant.now());
-        address.setUpdatedAt(Instant.now());
-        addressRepository.save(address);
-
+        try {
+            address.setCountry(country);
+            address.setCity(city);
+            address.setStreet(addressDto.getStreet());
+            address.setLongitude(addressDto.getLongitude());
+            address.setLatitude(addressDto.getLatitude());
+            address.setCreatedAt(Instant.now());
+            address.setUpdatedAt(Instant.now());
+            addressRepository.save(address);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ResourceNotFoundException("Can't create address, check your input data");
+        }
         return Optional.of(address);
     }
 
     @Override
     public Optional<Address> update(Long id, AddressDto addressDto) {
-        Address address = addressRepository.findById(id).orElseThrow();
+        Address address = addressRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Not found address with id: " + id)
+        );
 
         CountryEntity country = countryRepository.findByName(addressDto.getCountry().getName()).orElseThrow(
                 () -> new ResourceNotFoundException("No correspond to any country")
@@ -55,14 +61,19 @@ public class AddressServiceImpl implements AddressService {
         CityEntity city = cityRepository.findByName(addressDto.getCity().getName()).orElseThrow(
                 () -> new ResourceNotFoundException("No correspond to any city")
         );
+        try {
+            address.setCountry(country);
+            address.setCity(city);
+            address.setStreet(addressDto.getStreet());
+            address.setUpdatedAt(Instant.now());
+            address.setLongitude(addressDto.getLongitude());
+            address.setLatitude(addressDto.getLatitude());
+            addressRepository.save(address);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ResourceNotFoundException("Can't update address, check your input data");
+        }
 
-        address.setCountry(country);
-        address.setCity(city);
-        address.setStreet(addressDto.getStreet());
-        address.setUpdatedAt(Instant.now());
-        address.setLongitude(addressDto.getLongitude());
-        address.setLatitude(addressDto.getLatitude());
-        addressRepository.save(address);
 
         return Optional.of(address);
     }
@@ -77,6 +88,9 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public void delete(Long id) {
-        addressRepository.deleteById(id);
+        Address address = addressRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Not found address with id: " + id)
+        );
+        addressRepository.deleteById(address.getId());
     }
 }

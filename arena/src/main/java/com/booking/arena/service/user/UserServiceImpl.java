@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
         profile.setAddress(address);
         user.setUserProfile(profile);
         userRepository.save(user);
-        emailService.sendSimpleMessage(signUpDto.getEmail(), "Verify Code", emailVerificationService.generateCode());
+        emailService.send(signUpDto.getEmail(), "Verify Code", emailVerificationService.generateCode());
         log.debug("Created user by name {}", signUpDto.getUserProfile().getName());
         return Optional.of(Optional.of(ConvertEntityToDto.userToDto(user)).orElseThrow());
     }
@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void resendVerificationCode(Long id) {
-        emailService.sendSimpleMessage(userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+        emailService.send(userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 String.format("User with id %s not found", id)
         )).getEmail(), "Verify Code", emailVerificationService.generateCode());
     }

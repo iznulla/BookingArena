@@ -11,7 +11,7 @@ public class EmailServiceImpl {
 
     private final JavaMailSender emailSender;
 
-    public void sendSimpleMessage(String to, String subject, String text) {
+    public void send(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("bestinfofood@gmail.com");
         message.setTo(to);
