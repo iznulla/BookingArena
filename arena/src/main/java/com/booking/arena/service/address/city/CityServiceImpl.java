@@ -29,7 +29,7 @@ public class CityServiceImpl implements CityService {
     @Override
     public Optional<CityDto> create(CityDto cityDto) {
         CountryEntity country = countryRepository.findByName(cityDto.getCountryName()).orElseThrow(() ->
-                new ResourceNotFoundException("Not found country with id: " + cityDto.getId()));
+                new ResourceNotFoundException("Not found country with name: " + cityDto.getCountryName()));
         try {
             CityEntity city = CityEntity.builder()
                     .name(cityDto.getName())
@@ -41,6 +41,7 @@ public class CityServiceImpl implements CityService {
             log.info("City created: {}", city.getName());
             return Optional.of(CityDto.builder()
                     .name(city.getName())
+                    .countryName(country.getName())
                     .build());
         } catch (Exception e) {
             log.error("Invalid city details\n" + e.getMessage());
@@ -59,6 +60,7 @@ public class CityServiceImpl implements CityService {
             log.info("City updated: {}", city.getName());
             return Optional.of(CityDto.builder()
                     .name(city.getName())
+                    .countryName(city.getCountry().getName())
                     .build());
         } catch (Exception e) {
             log.error("Invalid city details\n" + e.getMessage());

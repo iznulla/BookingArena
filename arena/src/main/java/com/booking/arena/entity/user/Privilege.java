@@ -20,7 +20,7 @@ public class Privilege {
     private String name;
 
     @Builder.Default
-    @OneToMany(mappedBy = "privilege", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "privilege", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<RolePrivilege> rolePrivileges = new ArrayList<>();
 
     @Column(name = "created_at")

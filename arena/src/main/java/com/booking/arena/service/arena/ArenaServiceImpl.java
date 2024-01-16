@@ -9,6 +9,7 @@ import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.repository.arena.ArenaRepository;
 import com.booking.arena.repository.user.UserRepository;
 import com.booking.arena.service.filesistem.ImageService;
+import com.booking.arena.service.user.UserService;
 import com.booking.arena.utils.ConvertEntityToDto;
 import com.booking.arena.utils.DeserializeJson;
 import com.booking.arena.utils.SecurityUtils;
@@ -83,9 +84,7 @@ public class ArenaServiceImpl implements ArenaService{
         try {
             ArenaDto arenaDto = DeserializeJson.get(arenaDtoFromStr, ArenaDto.class);
             arenaDto.setImageFile(file);
-            ArenaInfo arenaInfo = arenaInfoService.create(arenaDto.getArenaInfo()).orElseThrow(
-                    () -> new ResourceNotFoundException("ArenaInfo is Not valid")
-            );
+            ArenaInfo arenaInfo = arenaInfoService.create(arenaDto.getArenaInfo()).orElseThrow();
             UserEntity user = userRepository.findById(Objects.requireNonNull(SecurityUtils.getCurrentUserId())).orElseThrow(
                     () -> new ResourceNotFoundException("User is Not valid")
             );
@@ -99,7 +98,7 @@ public class ArenaServiceImpl implements ArenaService{
             uploadImage(arena, arenaDto);
             arenaInfo.setArena(arena);
             arenaRepository.save(arena);
-            log.info("Create arena with id: {}, from user by username: {}", arena.getId(), user.getUsername());
+            log.info("Create arena with name: {}, from user by username: {}", arena.getName(), user.getUsername());
             return Optional.of(ConvertEntityToDto.arenaToDto(arena));
         } catch (Exception e) {
             throw new ResourceNotFoundException("Invalid input data\n" + e.getMessage());
@@ -115,10 +114,15 @@ public class ArenaServiceImpl implements ArenaService{
             arenaDto.setImageFile(file);
             arena.setName(arenaDto.getName());
             arena.setDescription(arenaDto.getDescription());
-            arena.setArenaInfo(arenaInfoService.update(arena.getArenaInfo().getId(), arenaDto.getArenaInfo()).orElseThrow());
+            try {
+                ArenaInfo arenaInfo = arenaInfoService.update(arena.getArenaInfo().getId(), arenaDto.getArenaInfo()).orElseThrow();
+                arena.setArenaInfo(arenaInfo);
+            } catch (Exception e) {
+                throw new ResourceNotFoundException("OW" + e.getMessage());
+            }
             uploadImage(arena, arenaDto);
             arenaRepository.save(arena);
-            log.debug("Updated arena with id: {}, from user by username: {}", arena.getId(), SecurityUtils.getCurrentUsername());
+            log.debug("Updated arena with name: {}", arena.getName());
             return Optional.of(ConvertEntityToDto.arenaToDto(arena));
         } catch (Exception e) {
             throw new ResourceNotFoundException("Invalid input data");

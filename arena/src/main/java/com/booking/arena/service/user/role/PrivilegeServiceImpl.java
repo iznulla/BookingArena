@@ -24,11 +24,14 @@ public class PrivilegeServiceImpl implements PrivilegeService {
     @Override
     public Optional<PrivilegeDto> create(PrivilegeDto privilegeDto) {
         try {
-            log.info("Privilege created: {}", privilegeDto.getName());
-            return Optional.of(ConvertEntityToDto.privilegeToDto(privilegeRepository.save(Privilege.builder()
+            Privilege privilege = Privilege.builder()
+                    .name(privilegeDto.getName())
                     .createdAt(Instant.now())
                     .updatedAt(Instant.now())
-                    .name(privilegeDto.getName()).build())));
+                    .build();
+            privilegeRepository.save(privilege);
+            log.info("Privilege created: {}", privilegeDto.getName());
+            return Optional.of(ConvertEntityToDto.privilegeToDto(privilege));
         } catch (Exception e) {
             throw new ResourceNotFoundException("Invalid privilege details\n" + e.getMessage());
         }

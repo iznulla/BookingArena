@@ -12,7 +12,6 @@ import com.booking.arena.utils.ConvertEntityToDto;
 import com.booking.arena.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +63,7 @@ public class ReservationServiceImpl implements ReservationService{
                 reservationArena.setBookingFrom(reservationArenaDto.getBookingFrom());
                 reservationArena.setBookingTo(reservationArenaDto.getBookingTo());
             } else {
-                throw new ResourceNotFoundException("Invalid, not free time");
+                throw new ResourceNotFoundException("Invalid, not free time ");
             }
             BookingUser bookingUser = new BookingUser();
             bookingUser.setBooking(reservationArena);
@@ -75,8 +74,8 @@ public class ReservationServiceImpl implements ReservationService{
             reservationArena.setCostumer(reservationArenaDto.getCostumer());
             bookingUser.setConsumer(reservationArenaDto.getCostumer());
             reservationArenaRepository.save(reservationArena);
-            log.debug("Created reservation arena with id: {}, from user by username: {}"
-                    , reservationArena.getId(), SecurityUtils.getCurrentUsername());
+            log.debug("Created reservation arena with name: {}"
+                    , reservationArena.getArena().getName());
             return Optional.of(ConvertEntityToDto.reservationArenaToDto(reservationArena));
         } catch (Exception e) {
             throw new ResourceNotFoundException("Invalid reservation details\n" + e.getMessage());
@@ -118,6 +117,8 @@ public class ReservationServiceImpl implements ReservationService{
         if (reservationArenaRepository.findById(id).isPresent()) {
             reservationArenaRepository.deleteById(id);
             log.info("Reservation arena deleted by id: {}", id);
+        } else {
+            throw new ResourceNotFoundException("Not found reservation arena with id: " + id);
         }
     }
 

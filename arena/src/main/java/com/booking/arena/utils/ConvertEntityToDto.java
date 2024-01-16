@@ -7,19 +7,13 @@ import com.booking.arena.dto.arena.ArenaDto;
 import com.booking.arena.dto.arena.ArenaInfoDto;
 import com.booking.arena.dto.auth.SignUpDto;
 import com.booking.arena.dto.booking.ReservationArenaDto;
-import com.booking.arena.dto.user.PrivilegeDto;
-import com.booking.arena.dto.user.RoleDto;
-import com.booking.arena.dto.user.UserDto;
-import com.booking.arena.dto.user.UserProfileDto;
+import com.booking.arena.dto.user.*;
 import com.booking.arena.entity.address.Address;
 import com.booking.arena.entity.address.CityEntity;
 import com.booking.arena.entity.address.CountryEntity;
 import com.booking.arena.entity.arena.ArenaEntity;
 import com.booking.arena.entity.booking.ReservationArena;
-import com.booking.arena.entity.user.Privilege;
-import com.booking.arena.entity.user.RoleEntity;
-import com.booking.arena.entity.user.UserEntity;
-import com.booking.arena.entity.user.UserProfile;
+import com.booking.arena.entity.user.*;
 
 import java.util.stream.Collectors;
 
@@ -124,11 +118,17 @@ public class ConvertEntityToDto {
                 .build();
     }
 
+    public static RolePrivilegeDto rolePrivilegeToDto(RolePrivilege privilege) {
+        return RolePrivilegeDto.builder()
+                .privilege(privilege.getPrivilege().getName())
+                .build();
+    }
+
     public static RoleDto roleToDto(RoleEntity role) {
         return RoleDto.builder()
                 .name(role.getName())
-                .privileges(role.getRolePrivileges().stream()
-                        .map(privilege -> privilegeToDto(privilege.getPrivilege()))
+                .rolePrivileges(role.getRolePrivileges().stream()
+                        .map(ConvertEntityToDto::rolePrivilegeToDto)
                         .collect(Collectors.toList()))
                 .build();
     }

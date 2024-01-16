@@ -2,6 +2,7 @@ package com.booking.arena.service.user.role;
 
 
 
+import com.booking.arena.dto.user.PrivilegeDto;
 import com.booking.arena.dto.user.RoleDto;
 import com.booking.arena.entity.user.RoleEntity;
 
@@ -16,5 +17,6 @@ public interface RoleService {
     Optional<RoleDto> create(RoleDto roleDto);
     void delete(Long id);
     void deletePrivilege(Long roleId, Long privilegeId);
+    Optional<RoleDto> addPrivilege(Long roleId, List<PrivilegeDto> privileges);
 
 }

@@ -13,6 +13,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"privilege_id", "role_id"})})
 public class RolePrivilege {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

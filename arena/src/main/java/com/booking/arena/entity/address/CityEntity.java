@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,9 +24,9 @@ public class CityEntity {
     @JoinColumn(name = "country_id")
     private CountryEntity country;
 
-
+    @Builder.Default
     @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<Address> addresses;
+    private List<Address> addresses = new ArrayList<>();
 
     @Column(name = "created_at")
     private Instant createdAt;

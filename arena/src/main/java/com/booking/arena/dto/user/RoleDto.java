@@ -18,5 +18,5 @@ public class RoleDto {
     @JsonIgnore
     private Long id;
     private String name;
-    private List<PrivilegeDto> privileges;
+    private List<RolePrivilegeDto> rolePrivileges;
 }

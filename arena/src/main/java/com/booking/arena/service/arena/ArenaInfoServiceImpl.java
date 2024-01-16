@@ -27,7 +27,8 @@ public class ArenaInfoServiceImpl implements ArenaInfoService{
 
     @Override
     public Optional<ArenaInfo> getById(Long id) {
-        return Optional.of(arenaInfoRepository.findById(id).orElseThrow(() ->
+        return Optional.of(
+                arenaInfoRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Not found arena with id: " + id)));
     }
 
@@ -73,7 +74,7 @@ public class ArenaInfoServiceImpl implements ArenaInfoService{
             return Optional.of(arenaInfo);
         }
         catch (Exception e){
-            throw new ResourceNotFoundException("Invalid input data");
+            throw new ResourceNotFoundException("Invalid input data" + e.getMessage());
         }
     }
 }
