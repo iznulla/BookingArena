@@ -1,12 +1,12 @@
-package com.booking.arena.service.booking;
+package com.booking.arena.functional;
 
 import com.booking.arena.dto.address.AddressDto;
 import com.booking.arena.dto.address.CityDto;
 import com.booking.arena.dto.address.CountryDto;
 import com.booking.arena.dto.arena.ArenaDto;
+import com.booking.arena.dto.arena.ArenaFiltersDto;
 import com.booking.arena.dto.booking.ReservationArenaDto;
 import com.booking.arena.dto.user.*;
-import com.booking.arena.dto.user.update.UserUpdateDto;
 import com.booking.arena.entity.address.Address;
 import com.booking.arena.entity.address.CityEntity;
 import com.booking.arena.entity.address.CountryEntity;
@@ -14,14 +14,13 @@ import com.booking.arena.entity.arena.ArenaEntity;
 import com.booking.arena.entity.arena.ArenaInfo;
 import com.booking.arena.entity.booking.ReservationArena;
 import com.booking.arena.entity.user.*;
-import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.repository.arena.ArenaRepository;
 import com.booking.arena.repository.booking.ReservationArenaRepository;
 import com.booking.arena.repository.user.UserRepository;
 import com.booking.arena.security.UserPrincipal;
-import com.booking.arena.utils.ConvertEntityToDto;
+import com.booking.arena.service.arena.ArenaServiceImpl;
+import com.booking.arena.service.booking.ReservationServiceImpl;
 import com.booking.arena.utils.SecurityUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,13 +36,11 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ReservationServiceTest {
+public class FunctionsServiceTest {
     @Mock
     ArenaRepository arenaRepository;
 
@@ -55,22 +52,21 @@ public class ReservationServiceTest {
     @InjectMocks
     ReservationServiceImpl reservationService;
 
+    @InjectMocks
+    ArenaServiceImpl arenaService;
+
     /*
     Role data
      */
     RoleEntity role;
-    RoleEntity updatedRole;
 
     RoleDto roleDto;
-    RoleDto updatedRoleDto;
 
     /*
     Privilege data
      */
     PrivilegeDto privilegeDto;
-    PrivilegeDto updatedPrivilegeDto;
     Privilege privilege;
-    Privilege updatedPrivilege;
 
     /*
     RolePrivilege data
@@ -78,40 +74,36 @@ public class ReservationServiceTest {
 
     RolePrivilege rolePrivilege;
     RolePrivilegeDto rolePrivilegeDto;
-    RolePrivilege updatedRolePrivilege;
 
     /*
     Address utils data
      */
     AddressDto addressDto;
     AddressDto updatedAddressDto;
+    AddressDto furtherAddressDto;
+    AddressDto nearAddressDto;
     Address address;
+    Address furtherAddress;
+    Address nearAddress;
     Address updatedAddress;
 
     /*
     City utils data
      */
     CityDto cityDto;
-    CityDto updatedCityDto;
-    CityDto updatedCityCountryDto;
     CityEntity city;
-    CityEntity updatedCity;
 
     /*
     Country utils data
      */
     CountryDto countryDto;
-    CountryDto updatedCountryDto;
     CountryEntity country;
-    CountryEntity updatedCountry;
 
     /*
     User utils data
      */
     UserEntity user;
-    UserEntity updatedUser;
     UserDto userDto;
-    UserUpdateDto updatedUserDto;
     UserProfile userProfile;
     UserProfileDto userProfileDto;
 
@@ -119,9 +111,9 @@ public class ReservationServiceTest {
     Arena utils data
      */
     ArenaDto arenaDto;
-    ArenaEntity arena;
+    ArenaEntity nearArena;
     ArenaInfo arenaInfo;
-    ArenaEntity updateArena;
+    ArenaEntity furtherArena;
     ArenaInfo updatedArenaInfo;
 
     /*
@@ -144,89 +136,56 @@ public class ReservationServiceTest {
                 .userId(1L)
                 .build();
         countryDto = CountryDto.builder()
-                .name("Country")
-                .build();
-        updatedCountryDto = CountryDto.builder()
-                .name("Update")
+                .name("Uzbekistan")
                 .build();
         country = CountryEntity.builder()
-                .id(1L)
-                .name("Country")
-                .build();
-        updatedCountry = CountryEntity.builder()
                 .id(1L)
                 .name("Uzbekistan")
                 .build();
         cityDto = CityDto.builder()
-                .name("City")
-                .countryName("Country")
+                .name("Tashkent")
+                .countryName("Uzbekistan")
                 .build();
         city = CityEntity.builder()
                 .id(1L)
-                .name("City")
+                .name("Tashkent")
                 .country(country)
                 .build();
-        updatedCity = CityEntity.builder()
-                .id(2L)
-                .name("Tashkent")
-                .country(updatedCountry)
-                .build();
-        updatedCityDto = CityDto.builder()
-                .name("Update")
-                .countryName("Country")
-                .build();
-        updatedCityCountryDto = CityDto.builder()
-                .name("Update")
-                .countryName("Update")
-                .build();
-        addressDto = AddressDto.builder()
-                .city(cityDto)
-                .country(countryDto)
-                .latitude(1.0)
-                .longitude(1.0)
-                .street("street")
-                .build();
-        updatedAddressDto = AddressDto.builder()
-                .city(updatedCityDto)
-                .country(updatedCountryDto)
-                .latitude(1.0)
-                .longitude(1.0)
-                .street("updated")
-                .build();
-        address = Address.builder()
-                .id(1L)
-                .street("street")
+        CityEntity samarkand =
+                CityEntity.builder()
+                        .name("Samarkand")
+                        .country(country)
+                        .build();
+
+        address = Address.builder().street("IT Park")
                 .city(city)
                 .country(country)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
-                .latitude(1.0)
-                .longitude(1.0)
+                .latitude(41.34101239392938)
+                .longitude(69.33599271527646)
                 .build();
 
-        updatedAddress = Address.builder()
-                .id(1L)
-                .street("Maksim Gorkiy")
-                .city(updatedCity)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
-                .latitude(1.0)
-                .longitude(1.0)
-                .country(updatedCountry)
+        furtherAddress = Address.builder()
+                .street("Yuzrabot")
+                .city(samarkand)
+                .country(country)
+                .latitude(41.35748363693251)
+                .longitude(69.37662189241189)
                 .build();
+
+        nearAddress = Address.builder()
+                .street("Ekobazar")
+                .city(city)
+                .country(country)
+                .latitude(41.34860798652945)
+                .longitude(69.35792002223815)
+                .build();
+
         privilegeDto = PrivilegeDto.builder()
                 .name("READ")
-                .build();
-        updatedPrivilegeDto = PrivilegeDto.builder()
-                .name("Update")
                 .build();
         privilege = Privilege.builder()
                 .id(1L)
                 .name("READ")
-                .build();
-        updatedPrivilege = Privilege.builder()
-                .id(2L)
-                .name("Update")
                 .build();
 
         role = RoleEntity.builder()
@@ -234,15 +193,6 @@ public class ReservationServiceTest {
                 .name("ADMIN")
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
-                .build();
-
-        updatedRole = RoleEntity.builder()
-                .id(1L)
-                .name("UPDATE")
-                .updatedAt(Instant.now())
-                .build();
-        updatedRolePrivilege = RolePrivilege.builder()
-                .privilege(updatedPrivilege)
                 .build();
         rolePrivilege = RolePrivilege.builder()
                 .id(1L)
@@ -256,9 +206,6 @@ public class ReservationServiceTest {
                 .name("ADMIN")
                 .rolePrivileges(List.of(rolePrivilegeDto))
                 .build();
-        updatedRoleDto = RoleDto.builder()
-                .name("UPDATE")
-                .build();
 
         role.setRolePrivileges(List.of(rolePrivilege));
 
@@ -268,18 +215,6 @@ public class ReservationServiceTest {
                 .userId(1L)
                 .username("username")
                 .isActive(true)
-                .build();
-        updatedUser = UserEntity.builder()
-                .email("updateEmail")
-                .role(updatedRole)
-                .userId(1L)
-                .username("updateUsername")
-                .isActive(true)
-                .build();
-        updatedUserDto = UserUpdateDto.builder()
-                .email("updateEmail")
-                .role("UPDATE")
-                .username("updateUsername")
                 .build();
         userProfile = UserProfile.builder()
                 .id(1L)
@@ -305,7 +240,7 @@ public class ReservationServiceTest {
 
         arenaInfo = ArenaInfo.builder()
                 .id(1L)
-                .address(address)
+                .address(nearAddress)
                 .phone("+998339191919")
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -316,7 +251,7 @@ public class ReservationServiceTest {
 
         updatedArenaInfo = ArenaInfo.builder()
                 .id(1L)
-                .address(updatedAddress)
+                .address(furtherAddress)
                 .phone("+998336161616")
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -330,32 +265,28 @@ public class ReservationServiceTest {
                 .description("World's best arena")
                 .status(true)
                 .build();
-        arena = ArenaEntity.builder()
+        nearArena = ArenaEntity.builder()
                 .id(1L)
                 .name("Budapest Arena")
                 .description("World's best arena")
                 .image("test.txt")
                 .arenaInfo(arenaInfo)
                 .build();
-        updateArena = ArenaEntity.builder()
+        furtherArena = ArenaEntity.builder()
                 .id(1L)
                 .name("Allianz Arena")
                 .description("World's true arena")
                 .arenaInfo(updatedArenaInfo)
                 .build();
-//        BookingUser bookingUser = BookingUser.builder()
-//                .user(user)
-//                .reservationArena(reservationArena)
-//                .build();
         reservationArena = ReservationArena.builder()
                 .id(1L)
-                .arena(arena)
+                .arena(nearArena)
                 .description("test")
                 .createdAt(Instant.now())
                 .costumer("user")
                 .totalPrice(250000)
                 .bookingFrom(Instant.parse("2024-01-16T06:12:17.464076Z"))
-                .bookingTo(Instant.parse("2024-01-16T08:02:11.464076Z"))
+                .bookingTo(Instant.parse("2024-01-16T08:12:17.464076Z"))
                 .build();
         reservationArenaDto = ReservationArenaDto.builder()
                 .arenaId(1L)
@@ -364,96 +295,159 @@ public class ReservationServiceTest {
                 .costumer("user")
                 .totalPrice(250000)
                 .bookingFrom(Instant.parse("2024-01-16T06:12:17.464076Z"))
-                .bookingTo(Instant.parse("2024-01-16T08:02:11.464076Z"))
+                .bookingTo(Instant.parse("2024-01-16T08:12:17.464076Z"))
                 .build();
         updatedReservationArena = ReservationArena.builder()
                 .id(2L)
-                .arena(arena)
+                .arena(nearArena)
                 .description("updated")
                 .createdAt(Instant.now())
                 .costumer("updated")
-                .totalPrice(125000)
+                .totalPrice(360000)
                 .bookingFrom(Instant.parse("2024-01-17T06:12:17.464076Z"))
-                .bookingTo(Instant.parse("2024-01-17T07:12:17.464076Z"))
+                .bookingTo(Instant.parse("2024-01-17T09:00:00.464076Z"))
                 .build();
         updatedReservationArenaDto = ReservationArenaDto.builder()
                 .arenaId(2L)
                 .description("updated")
                 .createdAt(Instant.now())
                 .costumer("updated")
-                .totalPrice(125000)
+                .totalPrice(360000)
                 .bookingFrom(Instant.parse("2024-01-17T06:12:17.464076Z"))
-                .bookingTo(Instant.parse("2024-01-17T07:12:17.464076Z"))
+                .bookingTo(Instant.parse("2024-01-17T09:00:00.464076Z"))
                 .build();
     }
 
     @Test
-    void ReservationService_createReservation_returnReservationDto() {
+    void ReservationService_createCreateFunction_returnReservationDto() {
         try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
             utilities.when(SecurityUtils::getCurrentUserId).thenReturn(1L);
             when(userRepository.findById(any())).thenReturn(Optional.of(user));
-            when(arenaRepository.findById(any())).thenReturn(Optional.of(arena));
+            when(arenaRepository.findById(any())).thenReturn(Optional.of(nearArena));
+            ReservationArenaDto reservArenaTest = reservationService.create(reservationArenaDto).orElseThrow();
+            assertAll(
+                    () -> assertThat(reservArenaTest).isNotNull()
+            );
+        }
+    }
+
+    @Test
+    void ReservationService_checkTotalPrice() {
+        try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
+            utilities.when(SecurityUtils::getCurrentUserId).thenReturn(1L);
+            when(userRepository.findById(any())).thenReturn(Optional.of(user));
+            when(arenaRepository.findById(any())).thenReturn(Optional.of(nearArena));
             ReservationArenaDto reservArenaTest = reservationService.create(reservationArenaDto).orElseThrow();
             assertAll(
                     () -> assertThat(reservArenaTest).isNotNull(),
-                    () -> Assertions.assertEquals(reservArenaTest, ConvertEntityToDto.reservationArenaToDto(reservationArena))
+                    () -> assertThat(reservArenaTest.getTotalPrice()).isEqualTo(250000)
             );
+            nearArena.getArenaInfo().setPrice(200000);
+            assertThat(reservationService.create(reservationArenaDto).orElseThrow()).isNotEqualTo(400000);
+            assertThat(reservationService.create(reservationArenaDto).orElseThrow()).isNotEqualTo(reservationArena.getTotalPrice());
+            assertThat(reservationService.create(updatedReservationArenaDto).orElseThrow()).isNotEqualTo(360000);
+            assertThat(reservationService.create(updatedReservationArenaDto).orElseThrow()).isNotEqualTo(updatedReservationArena.getTotalPrice());
         }
     }
 
     @Test
-    void ReservationService_updateReservation_returnReservationDto() {
+    void ReservationService_checkReservationInformation() {
         try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
             utilities.when(SecurityUtils::getCurrentUserId).thenReturn(1L);
-            when(arenaRepository.findById(any())).thenReturn(Optional.of(updateArena));
-            when(reservationArenaRepository.findById(any())).thenReturn(Optional.of(updatedReservationArena));
-            ReservationArenaDto reservArenaTest = reservationService.update(1L, updatedReservationArenaDto).orElseThrow();
+            when(userRepository.findById(any())).thenReturn(Optional.of(user));
+            when(arenaRepository.findById(1L)).thenReturn(Optional.of(nearArena));
+            ReservationArenaDto reservArenaTest = reservationService.create(reservationArenaDto).orElseThrow();
             assertAll(
                     () -> assertThat(reservArenaTest).isNotNull(),
-                    () -> Assertions.assertEquals(reservArenaTest, ConvertEntityToDto.reservationArenaToDto(updatedReservationArena))
+                    () -> assertThat(reservArenaTest.getArenaId()).isEqualTo(1L),
+                    () -> assertThat(reservArenaTest.getCostumer()).isEqualTo("user"),
+                    () -> assertThat(reservArenaTest.getBookingFrom()).isEqualTo(Instant.parse("2024-01-16T06:12:17.464076Z")),
+                    () -> assertThat(reservArenaTest.getBookingTo()).isEqualTo(Instant.parse("2024-01-16T08:12:17.464076Z")),
+                    () -> assertThat(reservArenaTest.getDescription()).isEqualTo("test"),
+                    () -> assertThat(reservArenaTest.getTotalPrice()).isEqualTo(250000)
+            );
+            when(arenaRepository.findById(2L)).thenReturn(Optional.of(furtherArena));
+            ReservationArenaDto updatedReservArenaTest = reservationService.create(updatedReservationArenaDto).orElseThrow();
+            assertAll(
+                    () -> assertThat(updatedReservArenaTest).isNotNull(),
+                    () -> assertThat(updatedReservArenaTest.getCostumer()).isEqualTo("updated"),
+                    () -> assertThat(updatedReservArenaTest.getBookingFrom()).isEqualTo(Instant.parse("2024-01-17T06:12:17.464076Z")),
+                    () -> assertThat(updatedReservArenaTest.getBookingTo()).isEqualTo(Instant.parse("2024-01-17T09:00:00.464076Z")),
+                    () -> assertThat(updatedReservArenaTest.getDescription()).isEqualTo("updated"),
+                    () -> assertThat(updatedReservArenaTest.getTotalPrice()).isEqualTo(360000)
+
             );
         }
     }
 
     @Test
-    void ReservationService_getByIdReservation_returnReservationDto() {
-        when(reservationArenaRepository.findById(1L)).thenReturn(Optional.of(reservationArena));
-        ReservationArenaDto reservArenaTest = reservationService.getById(1L).orElseThrow();
-        assertAll(
-                () -> assertThat(reservArenaTest).isNotNull(),
-                () -> Assertions.assertEquals(reservArenaTest, ConvertEntityToDto.reservationArenaToDto(reservationArena))
-        );
-    }
-
-    @Test
-    void ReservationService_getAll_returnListReservationDto() {
-        when(reservationArenaRepository.findAll()).thenReturn(List.of(reservationArena));
-        List<ReservationArenaDto> reservArenaTest = reservationService.getAll();
-        verify(reservationArenaRepository).findAll();
-        assertAll(
-                () -> assertThat(reservArenaTest).isNotNull()
-        );
-    }
-
-    @Test
-    void ReservationService_delete_returnNon() {
+    void ArenaService_checkArenaGetByFilterByTimeFromTo() {
         try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
             utilities.when(SecurityUtils::getCurrentUserId).thenReturn(1L);
-            when(reservationArenaRepository.findById(any())).thenReturn(Optional.of(reservationArena));
-            assertAll(
-                    () -> reservationService.delete(1L)
+            when(arenaRepository.findAll()).thenReturn(List.of(nearArena, furtherArena));
+            List<ArenaDto> arenaList = arenaService.getByFilter(
+                    ArenaFiltersDto.builder()
+                            .from(Instant.parse("2024-01-16T06:12:17.464076Z"))
+                            .to(Instant.parse("2024-01-16T08:12:17.464076Z"))
+                            .build()
             );
+            assertThat(arenaList).isNotEmpty();
+            assertThat(arenaList).hasSize(2);
         }
     }
 
     @Test
-    void ReservationService_checkAllMethodsOnThrows_returnThrows() {
-
-        assertAll(
-                () -> assertThrows(ResourceNotFoundException.class, () -> reservationService.update(1L, any())),
-                () -> assertThrows(ResourceNotFoundException.class, () -> reservationService.getById(1L)),
-                () -> assertThrows(ResourceNotFoundException.class, () -> reservationService.create(reservationArenaDto)),
-                () -> assertThrows(ResourceNotFoundException.class, () -> reservationService.delete(1L))
-        );
+    void ArenaService_checkArenaGetByFilterByLocation() {
+        try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
+            utilities.when(SecurityUtils::getCurrentUserId).thenReturn(1L);
+            when(arenaRepository.findAll()).thenReturn(List.of(nearArena, furtherArena));
+            List<ArenaDto> arenaList = arenaService.getByFilter(
+                    ArenaFiltersDto.builder()
+                            .longitude(userProfile.getAddress().getLongitude())
+                            .latitude(userProfile.getAddress().getLatitude())
+                            .build()
+            );
+            assertThat(arenaList).isNotEmpty();
+            assertThat(arenaList).hasSize(2);
+            assertThat(arenaList.get(0).getName()).isEqualTo(nearArena.getName());
+        }
     }
+
+    @Test
+    void ArenaService_checkArenaGetByFilterByCity() {
+        try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
+            utilities.when(SecurityUtils::getCurrentUserId).thenReturn(1L);
+            when(arenaRepository.findAll()).thenReturn(List.of(nearArena, furtherArena));
+            List<ArenaDto> arenaList = arenaService.getByFilter(
+                    ArenaFiltersDto.builder()
+                            .city("Samarkand")
+                            .build()
+            );
+            assertThat(arenaList).isNotEmpty();
+            assertThat(arenaList).hasSize(1);
+            assertThat(arenaList.get(0).getArenaInfo().getAddress().getCity().getName()).isEqualTo("Samarkand");
+            assertThat(arenaList.get(0).getArenaInfo().getPhone()).isEqualTo("+998336161616");
+            assertThat(arenaList.get(0).getArenaInfo().getPrice()).isEqualTo(120000);
+
+            List<ArenaDto> arenaListTas = arenaService.getByFilter(
+                    ArenaFiltersDto.builder()
+                            .city("Tashkent")
+                            .build()
+            );
+            assertThat(arenaListTas).isNotEmpty();
+            assertThat(arenaListTas).hasSize(1);
+            assertThat(arenaListTas.get(0).getArenaInfo().getAddress().getCity().getName()).isEqualTo("Tashkent");
+            assertThat(arenaListTas.get(0).getArenaInfo().getPhone()).isEqualTo("+998339191919");
+            assertThat(arenaListTas.get(0).getArenaInfo().getPrice()).isEqualTo(125000);
+
+            List<ArenaDto> arenaLisEmpty = arenaService.getByFilter(
+                    ArenaFiltersDto.builder()
+                            .city("Test")
+                            .build()
+            );
+            assertThat(arenaLisEmpty).isEmpty();
+        }
+    }
+
+
 }

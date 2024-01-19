@@ -3,7 +3,7 @@ create table arena (
     name varchar(255) not null unique,
     description varchar(255),
     status boolean default true,
-    user_id bigint references users(id)
+    user_id bigint references users(id) ON DELETE SET DEFAULT
 );
 
 create table reservation_arena (

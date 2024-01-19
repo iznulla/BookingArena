@@ -54,7 +54,6 @@ public class AddressServiceImpl implements AddressService {
         Address address = addressRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Not found address with id: " + id)
         );
-
         CountryEntity country = countryRepository.findByName(addressDto.getCountry().getName()).orElseThrow(
                 () -> new ResourceNotFoundException("No correspond to any country")
         );

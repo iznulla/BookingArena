@@ -20,12 +20,10 @@ import java.util.UUID;
 @Setter
 @ConfigurationProperties("app.image")
 public class ImageService {
-//    @Value("${app.image.bucket}")
     private String bucket;
 
     @SneakyThrows
     public void upload(String fileName, InputStream content) {
-        System.out.println(bucket);
         Path fullImagePath = Path.of(bucket, UUID.randomUUID()+fileName);
 
         try (content){
@@ -36,7 +34,6 @@ public class ImageService {
 
     @SneakyThrows
     public Optional<byte[]> get(String fileName) {
-        System.out.println(bucket+"/"+fileName);
         Path fullImagePath = Path.of(bucket, fileName);
         return Files.exists(fullImagePath) ? Optional.of(Files.readAllBytes(fullImagePath)) : Optional.empty();
     }

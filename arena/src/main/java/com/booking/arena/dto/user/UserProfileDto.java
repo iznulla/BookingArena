@@ -17,8 +17,6 @@ public class UserProfileDto {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY, hidden = true)
     @JsonIgnore
     private Long id;
-    private String username;
-    private String email;
     private String name;
     private String surname;
     private AddressDto address;

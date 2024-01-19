@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,21 +51,21 @@ public class ReservationServiceImpl implements ReservationService{
                 () -> new ResourceNotFoundException("Not found arena with id: " + reservationArenaDto.getArenaId())
         );
         try {
-            ReservationArena reservationArena = ReservationArena.builder()
-                    .createdAt(Instant.now())
-                    .arena(arena)
-                    .description(reservationArenaDto.getDescription())
-                    .costumer(reservationArenaDto.getCostumer())
-                    .totalPrice((int) (arena.getArenaInfo().getPrice() * (
-                            reservationArenaDto.getBookingTo().getEpochSecond() -
-                                    reservationArenaDto.getBookingFrom().getEpochSecond()) / 3600))
-                    .build();
+            ReservationArena reservationArena = new ReservationArena();
             if (getByReservationByTime(arena, reservationArenaDto.getBookingFrom(), reservationArenaDto.getBookingTo())) {
                 reservationArena.setBookingFrom(reservationArenaDto.getBookingFrom());
                 reservationArena.setBookingTo(reservationArenaDto.getBookingTo());
+                reservationArena.setCreatedAt(Instant.now());
+                reservationArena.setArena(arena);
+                reservationArena.setDescription(reservationArenaDto.getDescription());
+                reservationArena.setCostumer(reservationArenaDto.getCostumer());
             } else {
                 throw new ResourceNotFoundException("Invalid, not free time ");
             }
+            int reservationTime = (int) Math.ceil(ChronoUnit.MINUTES.between(
+                                reservationArenaDto.getBookingFrom(), reservationArenaDto.getBookingTo()) / 60.0);
+            int totalPrice = arena.getArenaInfo().getPrice() * reservationTime;
+            reservationArena.setTotalPrice((totalPrice));
             BookingUser bookingUser = new BookingUser();
             bookingUser.setBooking(reservationArena);
             if (SecurityUtils.getCurrentUserId() != null) {

@@ -69,8 +69,6 @@ public class ConvertEntityToDto {
     public static UserProfileDto userProfileToDto(UserProfile userProfile) {
         return UserProfileDto.builder()
                 .id(userProfile.getId())
-                .username(userProfile.getUser().getUsername())
-                .email(userProfile.getUser().getEmail())
                 .name(userProfile.getName())
                 .surname(userProfile.getSurname())
                 .address(addressToDto(userProfile.getAddress()))

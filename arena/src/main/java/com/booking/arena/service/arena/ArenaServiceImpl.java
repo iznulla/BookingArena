@@ -9,7 +9,6 @@ import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.repository.arena.ArenaRepository;
 import com.booking.arena.repository.user.UserRepository;
 import com.booking.arena.service.filesistem.ImageService;
-import com.booking.arena.service.user.UserService;
 import com.booking.arena.utils.ConvertEntityToDto;
 import com.booking.arena.utils.DeserializeJson;
 import com.booking.arena.utils.SecurityUtils;
@@ -53,7 +52,7 @@ public class ArenaServiceImpl implements ArenaService{
     @Override
     public List<ArenaDto> getByFilter(ArenaFiltersDto filters) {
         Set<ArenaEntity> arenas;
-        if (!filters.getCity().isEmpty() && filters.getCity() != null) {
+        if (filters.getCity() != null) {
             arenas = getByCity(arenaRepository.findAll(), filters.getCity());
         } else {
             arenas = new HashSet<>(arenaRepository.findAll());

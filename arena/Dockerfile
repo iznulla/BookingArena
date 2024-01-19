@@ -1,7 +1,7 @@
 FROM vegardit/graalvm-maven:latest-java17 as builder
 WORKDIR /app
 COPY . /app/.
-RUN mvn -f /app/pom.xml clean package -Dmaven.test.skip=true
+RUN mvn -f /app/pom.xml clean package
 
 FROM openjdk:17-oracle
 WORKDIR /app

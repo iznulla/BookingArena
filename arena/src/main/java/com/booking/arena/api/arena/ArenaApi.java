@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -75,8 +76,8 @@ public class ArenaApi {
     )
     @PreAuthorize("hasAuthority('CREATE_ARENA')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void create(@RequestPart(required = false) MultipartFile file, @RequestPart String arenaDto) throws IOException, InterruptedException {
-        arenaService.create(arenaDto, file);
+    public ResponseEntity<?> create(@RequestPart(required = false) MultipartFile file, @RequestPart String arenaDto) throws IOException, InterruptedException {
+        return new ResponseEntity<>(arenaService.create(arenaDto, file),HttpStatus.CREATED);
     }
 
     @ApiResponses({
@@ -129,7 +130,7 @@ public class ArenaApi {
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @RequestPart(value = "file", required = false) MultipartFile file,
                                     @RequestPart String arenaDto) {
-        return ResponseEntity.ok(arenaService.update(id, arenaDto, file));
+        return new ResponseEntity<>(arenaService.update(id, arenaDto, file), HttpStatus.CREATED);
     }
 
     @ApiResponses({

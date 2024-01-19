@@ -24,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Role", description = "Role management APIs")
 @RequestMapping("/api/v1/role")
+@PreAuthorize("hasAuthority('CREATE')")
 public class RoleApi {
     private final RoleService roleService;
     private final PrivilegeRepository privilegeRepository;
@@ -64,7 +65,6 @@ public class RoleApi {
             summary = "POST create role",
             description = "Позволяет создать роль"
     )
-//    @PreAuthorize("hasAuthority('CREATE')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody RoleDto roleDto) {
         return new ResponseEntity<>(roleService.create(roleDto), HttpStatus.valueOf(201));
@@ -78,7 +78,6 @@ public class RoleApi {
             summary = "PATCH{id} update role by Id and new params in body",
             description = "Позволяет изменить данные роли, предназначен только для админа"
     )
-//    @PreAuthorize("hasAuthority('UPDATE')")
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody RoleDto roleDto) {
         return new ResponseEntity<>(roleService.update(id, roleDto), HttpStatus.valueOf(201));
@@ -89,25 +88,23 @@ public class RoleApi {
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
-            summary = "DELETE{id} privilege by Id",
+            summary = "DELETE{id} ROLE by Id",
             description = "Позволяет удалить разрешения"
     )
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('DELETE')")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         roleService.delete(id);
         return new ResponseEntity<>(String.format("Delete role by Id: %d success", id), HttpStatus.NO_CONTENT);
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = RoleDto.class)) }),
+            @ApiResponse(responseCode = "204"),
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema(implementation = ResourceNotFoundException.class)) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @Operation(
             summary = "DELETE{id} privilege by Id from role",
             description = "Позволяет удалить разрешения из роли"
     )
-//    @PreAuthorize("hasAuthority('DELETE')")
     @DeleteMapping("/{id}/privileges")
     public ResponseEntity<?> deletePrivilege(@PathVariable Long id, @RequestBody PrivilegeDto privilegeDto) {
         Privilege privilege = privilegeRepository.findByName(privilegeDto.getName()).orElseThrow(() ->
@@ -124,7 +121,6 @@ public class RoleApi {
             summary = "PATCH{id} update role by Id add new privileges",
             description = "Позволяет добавить привилегии ролям, предназначен только для админа"
     )
-//    @PreAuthorize("hasAuthority('UPDATE')")
     @PatchMapping("/{id}/privileges")
     public ResponseEntity<?> addPrivilege(@PathVariable Long id, @RequestBody List<PrivilegeDto> privilegeDto) {
         return new ResponseEntity<>(roleService.addPrivilege(id, privilegeDto), HttpStatus.valueOf(201));

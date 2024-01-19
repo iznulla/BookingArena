@@ -40,8 +40,6 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile profile = userProfileRepository.findByUser(user).orElseThrow();
         try {
             if (id.equals(SecurityUtils.getCurrentUserId())) {
-                user.setUsername(userProfileDto.getUsername());
-                user.setEmail(userProfileDto.getEmail());
                 profile.setName(userProfileDto.getName());
                 profile.setSurname(userProfileDto.getSurname());
                 profile.setUpdatedAt(Instant.now());

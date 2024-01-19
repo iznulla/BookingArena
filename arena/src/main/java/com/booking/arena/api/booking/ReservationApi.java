@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class ReservationApi {
     )
     @PostMapping
     public ResponseEntity<?> create(@RequestBody ReservationArenaDto reservationArenaDto) {
-        return ResponseEntity.ok(reservationService.create(reservationArenaDto));
+        return new ResponseEntity<>(reservationService.create(reservationArenaDto), HttpStatus.CREATED);
     }
 
     @ApiResponses({
@@ -72,7 +73,7 @@ public class ReservationApi {
     @PreAuthorize("hasAuthority('UPDATE_RESERVATION')")
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ReservationArenaDto reservationArenaDto) {
-        return ResponseEntity.ok(reservationService.update(id, reservationArenaDto));
+        return new ResponseEntity<>(reservationService.update(id, reservationArenaDto), HttpStatus.CREATED);
     }
 
     @ApiResponses({

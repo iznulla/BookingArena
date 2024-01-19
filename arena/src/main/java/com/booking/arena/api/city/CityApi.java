@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +60,7 @@ public class CityApi {
     )
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CityDto cityDto) {
-        return ResponseEntity.ok(cityService.create(cityDto));
+        return new ResponseEntity<>(cityService.create(cityDto), HttpStatus.CREATED);
     }
 
     @ApiResponses({
@@ -72,7 +73,7 @@ public class CityApi {
     )
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CityDto cityDto) {
-        return ResponseEntity.ok(cityService.update(id, cityDto));
+        return new ResponseEntity<>(cityService.update(id, cityDto), HttpStatus.CREATED);
     }
 
     @ApiResponses({

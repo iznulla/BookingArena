@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class CountryApi {
     )
     @GetMapping
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(countryService.getAll());
+        return new ResponseEntity<>(countryService.getAll(), HttpStatus.OK);
     }
 
     @ApiResponses({
@@ -58,7 +59,7 @@ public class CountryApi {
     )
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CountryDto countryDto) {
-        return ResponseEntity.ok(countryService.create(countryDto));
+        return new ResponseEntity<>(countryService.create(countryDto), HttpStatus.CREATED);
     }
 
     @ApiResponses({
@@ -71,7 +72,7 @@ public class CountryApi {
     )
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CountryDto countryDto) {
-        return ResponseEntity.ok(countryService.update(id, countryDto));
+        return new ResponseEntity<>(countryService.update(id, countryDto), HttpStatus.CREATED);
     }
 
     @ApiResponses({

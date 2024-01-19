@@ -1,8 +1,6 @@
 package com.booking.arena.service.privilege;
 
-import com.booking.arena.dto.address.CountryDto;
 import com.booking.arena.dto.user.PrivilegeDto;
-import com.booking.arena.entity.address.CountryEntity;
 import com.booking.arena.entity.user.Privilege;
 import com.booking.arena.exception.ResourceNotFoundException;
 import com.booking.arena.repository.user.PrivilegeRepository;

@@ -10,7 +10,7 @@ create table city (
     name varchar(255) not null,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp,
-    country_id bigint REFERENCES country(id)
+    country_id bigint REFERENCES country(id) ON DELETE SET DEFAULT
 );
 
 create table address (
@@ -20,8 +20,8 @@ create table address (
     longitude double precision,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp,
-    country_id bigint REFERENCES country(id),
-    city_id bigint REFERENCES city(id)
+    country_id bigint REFERENCES country(id) ON DELETE SET DEFAULT,
+    city_id bigint REFERENCES city(id) ON DELETE SET DEFAULT
 );
 
 create table user_profile (
@@ -55,5 +55,5 @@ create table role_privilege (
 );
 
 alter table user_entity
-add column role_id bigint REFERENCES role(id),
+add column role_id bigint REFERENCES role(id) ON DELETE SET DEFAULT,
 add constraint u_name_unique unique(username, email);
